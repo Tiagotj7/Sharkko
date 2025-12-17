@@ -19,8 +19,16 @@ jobs:
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
 
-          protocol: ftps
+          protocol: ftp
           port: 21
           local-dir: ./
           server-dir: /htdocs/ # pasta do seu servidor FTP
+          exclude: |
+            **/.git/**
+            **/.github/**
+            **/.gitignore
+            **/README.md
+            **/.env
+            **/uploads/**
+          timeout: 300
           
