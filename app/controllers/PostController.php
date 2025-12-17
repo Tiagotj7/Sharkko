@@ -19,7 +19,7 @@ class PostController
         $user = current_user();
         $posts = Post::allWithUser();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/views/feed/index.php';
+require_once BASE_PATH . '/app/views/feed/index.php';
     }
 
     public static function create()
