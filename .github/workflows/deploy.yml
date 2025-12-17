@@ -15,22 +15,22 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Deploy para o servidor FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          local-dir: ./
-          server-dir: /htdocs/
-          exclude: |
-            **/.git/**
-            **/.github/**
-            **/.gitignore
-            **/README.md
-            **/.env
-            **/uploads/**
-          timeout: 600
-          state-name: .ftp-deploy-sync-state.json
+- name: Deploy para o servidor FTP
+  uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+  with:
+    server: ${{ secrets.FTP_SERVER }}
+    username: ${{ secrets.FTP_USERNAME }}
+    password: ${{ secrets.FTP_PASSWORD }}
+    protocol: ftp
+    port: 21
+    local-dir: ./
+    server-dir: /htdocs/
+    exclude: |
+      **/.git/**
+      **/.github/**
+      **/.gitignore
+      **/README.md
+      **/.env
+      **/uploads/**
+    timeout: 600
+    state-name: .ftp-deploy-sync-state.json
