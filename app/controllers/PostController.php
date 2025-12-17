@@ -7,6 +7,7 @@ require_once __DIR__ . '/../helpers/upload.php';
 require_once __DIR__ . '/../models/Post.php';
 require_once __DIR__ . '/../models/Like.php';
 require_once __DIR__ . '/../models/Comment.php';
+require_once __DIR__ . '/../models/Favorite.php';
 
 class PostController
 {
@@ -82,6 +83,7 @@ class PostController
         $user = current_user();
         $likesCount = Like::countForPost($id);
         $userLiked = Like::userLiked($id, $user['id']);
+        $userFavorited = Favorite::userFavorited($id, $user['id']);
 
         require_once __DIR__ . '/../views/post/show.php';
     }

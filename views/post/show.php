@@ -81,6 +81,13 @@
           <?= $userLiked ? 'Descurtir' : 'Curtir' ?> (<?= $likesCount ?>)
         </button>
       </form>
+      <form action="post_favorite.php" method="post" class="inline-form">
+        <input type="hidden" name="csrf_token" value="<?= esc(csrf_token()) ?>">
+        <input type="hidden" name="post_id" value="<?= (int)$post['id'] ?>">
+        <button class="btn-link">
+          <?= $userFavorited ? 'Desfavoritar' : 'Favoritar' ?>
+        </button>
+      </form>
     </footer>
   </article>
 
