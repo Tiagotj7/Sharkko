@@ -1,132 +1,143 @@
-/               <- raiz do site (htdocs no InfinityFree)
-├── app/        <- código PHP de "lógica" (models, controllers, helpers)
+# DevNetwork – Rede para Devs, Empresas e Projetos
+
+DevNetwork é uma aplicação web em **PHP puro + MySQL** que funciona como uma mistura de **LinkedIn, GitHub, Mercado Livre e Shark Tank**:
+
+- Devs e empresas criam perfis
+- Publicam projetos com tecnologias usadas, hashtags e formas de contato
+- Podem curtir, comentar, favoritar, buscar projetos e pessoas
+- Enviar **mensagens privadas (DM)** entre usuários
+- Escolher entre **tema Dark** ou **Light**
+
+Pensado para rodar em hospedagem gratuita como **InfinityFree**.
+
+---
+
+## ✨ Funcionalidades
+
+### Autenticação & Perfil
+
+- Registro de usuário
+- Login / Logout
+- Perfil de usuário com:
+  - Nome, bio, localização
+  - Links (GitHub, LinkedIn, Website)
+  - Foto de avatar (upload)
+  - Tema dark/light
+- Edição de perfil
+- Alterar senha (em `settings.php`)
+
+### Projetos (Posts)
+
+- Criar post/projeto com:
+  - Título
+  - Descrição
+  - Imagem do projeto (upload)
+  - Linguagens / tecnologias (texto separado por vírgula)
+  - Hashtags (texto separado por vírgula)
+  - Contato (email e/ou link externo)
+- Ver post detalhado
+- Editar e excluir posts (apenas o autor)
+- Feed com lista de posts mais recentes
+
+### Interação
+
+- Curtir / Descurtir posts
+- Comentar posts
+- Favoritar / desfavoritar posts
+- Página com **“Meus favoritos”**
+
+### Mensagens privadas (DM)
+
+- Lista de conversas do usuário
+- Criar conversa a partir do perfil de outro usuário (“Enviar mensagem”)
+- Chat simples (mensagens em ordem cronológica)
+
+### Busca
+
+- Página de busca (`search.php`), permitindo procurar:
+  - Usuários por nome/bio
+  - Projetos por título, descrição, tags, linguagens
+
+### Tema Dark / Light
+
+- Tema Dark padrão (modo “hacker/dev”)
+- Tema Light opcional
+- Alternar tema com botão de “Tema” no topo
+- Tema também pode ser salvo nas configurações do usuário
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+- **PHP** (7.4+ recomendado; funciona em PHP 8+)
+- **MySQL** (InnoDB, utf8mb4)
+- HTML5 / CSS3 / JavaScript puro
+- Sem frameworks (nem Laravel, nem React/Vue)
+- Hospedagem alvo: **InfinityFree** (ou qualquer host com PHP+MySQL)
+
+---
+
+## 📁 Estrutura de pastas
+
+Na raiz do site (em geral a pasta `htdocs` no InfinityFree):
+
+```bash
+/               # raiz do site (htdocs)
+├── app/
 │   ├── config/
-│   │   └── config.php        <- configurações globais (DB, paths, etc.)
-│   │
+│   │   └── config.php
 │   ├── database/
-│   │   └── connection.php    <- conexão PDO/MySQL usando dados do InfinityFree
-│   │
-│   ├── models/               <- classes que representam tabelas do banco
-│   │   ├── User.php
-│   │   ├── Post.php
-│   │   ├── Tag.php
-│   │   ├── Language.php
-│   │   ├── Comment.php
-│   │   ├── Like.php
-│   │   ├── Favorite.php
-│   │   ├── Conversation.php
-│   │   └── Message.php
-│   │
-│   ├── controllers/          <- arquivos que processam requisições
-│   │   ├── AuthController.php        <- login, registro, logout
-│   │   ├── PostController.php        <- CRUD de posts (criar, editar, listar)
-│   │   ├── ProfileController.php     <- ver/editar perfil
-│   │   ├── MessageController.php     <- mensagens e conversas
-│   │   ├── FavoriteController.php    <- favoritar/desfavoritar posts
-│   │   └── SettingsController.php    <- configurações de conta/tema
-│   │
-│   └── helpers/              <- funções auxiliares em PHP
-│       ├── auth.php          <- sessão do usuário, checar login, etc.
-│       ├── csrf.php          <- gerar/validar tokens CSRF
-│       ├── validation.php    <- validação de formulários
-│       ├── upload.php        <- upload de imagens (avatar, foto do post)
-│       └── utils.php         <- helpers gerais (formatar data, etc.)
+│   │   └── connection.php
+│   ├── helpers/
+│   │   ├── auth.php
+│   │   ├── csrf.php
+│   │   └── utils.php
+│   └── models/
+│       ├── User.php
+│       ├── Post.php
+│       ├── Comment.php
+│       ├── Like.php
+│       ├── Favorite.php
+│       ├── Conversation.php
+│       ├── Message.php
+│       ├── Tag.php         # opcional, usado para listar tags agregadas
+│       └── Language.php    # opcional, usado para listar linguagens agregadas
 │
-├── views/                    <- HTML + PHP (templates das telas)
-│   ├── layouts/
-│   │   └── main.php          <- layout base (inclui <head>, header, footer)
-│   │
-│   ├── partials/
-│   │   ├── head.php          <- <head> com CSS/JS
-│   │   ├── header.php        <- topo do site (logo, busca)
-│   │   ├── nav.php           <- menu principal (feed, mensagens, perfil, etc.)
-│   │   ├── footer.php
-│   │   └── flash.php         <- mensagens de sucesso/erro
-│   │
-│   ├── landing/              <- página inicial (não logado)
-│   │   └── index.php
-│   │
-│   ├── auth/
-│   │   ├── login.php
-│   │   └── register.php
-│   │
-│   ├── feed/
-│   │   └── index.php         <- lista de posts estilo LinkedIn/GitHub
-│   │
-│   ├── post/
-│   │   ├── create.php        <- formulário criar post
-│   │   ├── edit.php          <- formulário editar post
-│   │   └── show.php          <- ver post individual (comentários, etc.)
-│   │
-│   ├── profile/
-│   │   ├── show.php          <- perfil público
-│   │   └── edit.php          <- editar perfil (bio, links, avatar)
-│   │
-│   ├── messages/
-│   │   ├── index.php         <- lista de conversas
-│   │   └── conversation.php  <- chat entre dois usuários
-│   │
-│   ├── favorites/
-│   │   └── index.php         <- posts favoritados
-│   │
-│   └── settings/
-│       └── index.php         <- configurações (tema dark/light, senha, etc.)
+├── views/
+│   └── partials/
+│       ├── head.php
+│       ├── header.php
+│       ├── flash.php
+│       └── footer.php
 │
-├── assets/                   <- arquivos estáticos (não-PHP)
+├── assets/
 │   ├── css/
-│   │   ├── main.css          <- estilos gerais + modo dark/light (variáveis CSS)
-│   │   └── auth.css          <- (opcional) telas de login/registro
-│   │
-│   ├── js/
-│   │   ├── main.js
-│   │   └── theme-toggle.js   <- script que alterna dark/light (altera data-theme)
-│   │
-│   └── img/
-│       ├── logo.svg
-│       ├── default-avatar.png
-│       └── (outros ícones/imagens)
+│   │   └── main.css
+│   └── js/
+│       └── theme-toggle.js
 │
-├── uploads/                  <- uploads feitos pelos usuários
-│   ├── avatars/              <- fotos de perfil
-│   └── posts/                <- imagens dos posts/projetos
+├── uploads/
+│   ├── avatars/            # avatars de usuários (upload)
+│   └── posts/              # imagens dos posts (upload)
 │
-├── sql/                      <- scripts SQL para criar/popular o banco
-│   ├── schema.sql            <- todas as CREATE TABLE (users, posts, etc.)
-│   ├── seed_languages.sql    <- linguagens iniciais (PHP, JS, Python, etc.)
-│   └── seed_tags.sql         <- hashtags iniciais (startup, backend, frontend...)
+├── sql/
+│   └── schema.sql          # criação das tabelas do MySQL
 │
-├── index.php                 <- landing page (não logado) / redireciona para feed se logado
-├── login.php                 <- chama AuthController (exibe form ou processa POST)
-├── register.php              <- idem, para registro
-├── logout.php                <- encerra sessão e redireciona
-│
-├── feed.php                  <- chama PostController::index (lista posts)
-├── post_create.php           <- exibe formulário (PostController::create)
-├── post_store.php            <- recebe POST e cria registro (PostController::store)
-├── post_show.php             <- ver post (PostController::show)
-├── post_edit.php             <- formulário edição (PostController::edit)
-├── post_update.php           <- processa edição (PostController::update)
-├── post_delete.php           <- apaga post (PostController::delete)
-│
-├── profile.php               <- ver perfil (ProfileController::show)
-├── profile_edit.php          <- editar perfil (ProfileController::edit/update)
-│
-├── messages.php              <- lista conversas (MessageController::index)
-├── conversation.php          <- conversa específica (MessageController::show/send)
-│
-├── favorites.php             <- listar favoritos (FavoriteController::index)
-│
-├── settings.php              <- tela de configurações (SettingsController)
-├── search.php                <- busca por posts / usuários / tags
-│
-├── .env                      <- arquivo de configuração de ambiente (DB, etc.)
-├── .htaccess                 <- (opcional) regras de URL amigável, redirecionos, etc.
-└── README.md                 <- instruções básicas do projeto
-
-## Instalação
-
-1. Clone o repositório.
-2. Copie o arquivo `.env` e ajuste as credenciais do banco de dados.
-3. Execute os scripts SQL em `sql/schema.sql` para criar as tabelas.
-4. Opcionalmente, execute `sql/seed_languages.sql` e `sql/seed_tags.sql` para dados iniciais.
-5. Configure o servidor web para apontar para a pasta raiz do projeto.
+├── index.php               # landing page + feed resumido
+├── login.php               # login
+├── register.php            # registro
+├── logout.php              # logout
+├── feed.php                # feed de posts (para usuários logados)
+├── post_create.php         # criar novo post
+├── post_show.php           # ver post (detalhe + comentários)
+├── post_like.php           # curtir / descurtir post (POST)
+├── post_favorite.php       # favoritar / desfavoritar post (POST)
+├── post_edit.php           # editar post
+├── post_delete.php         # apagar post
+├── profile.php             # ver perfil (público)
+├── profile_edit.php        # editar perfil (logado)
+├── favorites.php           # listar posts favoritados
+├── messages.php            # lista de conversas (DMs)
+├── conversation.php        # tela de chat de uma conversa
+├── search.php              # busca de posts/usuários
+└── settings.php            # configurações (tema e senha)
