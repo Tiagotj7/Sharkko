@@ -1,6 +1,10 @@
 <?php
 // app/config/config.php
 
+// Caminhos
+define('APP_PATH', __DIR__ . '/..');
+define('ROOT_PATH', dirname(__DIR__, 2));
+
 // Load environment variables from .env file
 function loadEnv($path) {
     if (!file_exists($path)) {
@@ -35,8 +39,6 @@ $baseUrl = getenv('BASE_URL') ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
 define('BASE_URL', $baseUrl);
 
 // Caminhos
-define('APP_PATH', __DIR__ . '/..');
-define('ROOT_PATH', dirname(__DIR__, 2));
 define('UPLOAD_PATH', ROOT_PATH . '/uploads');
 define('UPLOAD_AVATARS', UPLOAD_PATH . '/avatars');
 define('UPLOAD_POSTS', UPLOAD_PATH . '/posts');
