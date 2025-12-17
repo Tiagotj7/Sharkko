@@ -18,7 +18,7 @@ jobs:
           server: ${{ secrets.FTP_HOST}}
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
-          protocol: ftps
+          protocol: ftp
           port: 21
           local-dir: ./
           server-dir: /htdocs/
@@ -29,7 +29,6 @@ jobs:
             **/README.md
             **/.env
             **/uploads/**
-          timeout: 300
-          security: loose
+          timeout: 600
           state-name: .ftp-deploy-sync-state.json
           
