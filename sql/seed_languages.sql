@@ -1,0 +1,22 @@
+-- Seed languages
+INSERT INTO languages (name) VALUES
+('PHP'),
+('JavaScript'),
+('Python'),
+('Java'),
+('C#'),
+('Ruby'),
+('Go'),
+('Rust'),
+('TypeScript'),
+('Swift'),
+('Kotlin'),
+('C++'),
+('C'),
+('HTML'),
+('CSS'),
+('SQL'),
+('Bash'),
+('R'),
+('MATLAB'),
+('Scala');

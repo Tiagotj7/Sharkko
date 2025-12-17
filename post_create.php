@@ -1,13 +1,7 @@
 <?php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/models/Post.php';
+require_once __DIR__ . '/app/controllers/PostController.php';
 
-require_login();
-$user = current_user();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+PostController::create();
     if (!verify_csrf($_POST['csrf'] ?? '')) {
         flash('error', 'Token CSRF inválido.');
         redirect('post_create.php');
@@ -49,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     flash('success', 'Projeto criado com sucesso!');
     redirect('post_show.php?id=' . $postId);
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

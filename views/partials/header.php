@@ -9,11 +9,16 @@ $user = current_user();
   <div class="container topbar-inner">
     <a href="index.php" class="logo">DevNetwork</a>
 
+    <form action="search.php" method="get" class="search-form">
+      <input type="text" name="q" placeholder="Buscar projetos, devs..." value="<?= esc($_GET['q'] ?? '') ?>">
+    </form>
+
     <nav class="nav-links">
       <?php if ($user): ?>
         <a href="feed.php">Feed</a>
-        <a href="post_create.php">Novo Projeto</a>
-        <a href="profile.php?id=<?= (int)$user['id'] ?>">Meu Perfil</a>
+        <a href="messages.php">Mensagens</a>
+        <a href="favorites.php">Favoritos</a>
+        <a href="settings.php">Configurações</a>
       <?php endif; ?>
     </nav>
 
@@ -21,7 +26,7 @@ $user = current_user();
       <button id="themeToggle" class="btn-secondary">Tema</button>
 
       <?php if ($user): ?>
-        <span class="user-name"><?= esc($user['name']) ?></span>
+        <a href="profile.php?id=<?= (int)$user['id'] ?>" class="user-name"><?= esc($user['name']) ?></a>
         <a href="logout.php" class="btn-outline">Sair</a>
       <?php else: ?>
         <a href="login.php" class="btn-outline">Login</a>

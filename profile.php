@@ -1,16 +1,10 @@
 <?php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/models/User.php';
-require_once __DIR__ . '/app/models/Post.php';
+require_once __DIR__ . '/app/controllers/ProfileController.php';
 
-$profileId = (int)($_GET['id'] ?? 0);
-$profile = User::findById($profileId);
-
-if (!$profile) {
+ProfileController::show();
     flash('error', 'Usuário não encontrado.');
     redirect('index.php');
-}
+
 
 $posts = Post::byUser($profileId);
 $current = current_user();

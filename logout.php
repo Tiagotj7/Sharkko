@@ -1,7 +1,4 @@
 <?php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
+require_once __DIR__ . '/app/controllers/AuthController.php';
 
-logout_user();
-flash('success', 'Você saiu da sua conta.');
-redirect('index.php');
+AuthController::logout();

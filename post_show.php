@@ -1,13 +1,7 @@
 <?php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/models/Post.php';
-require_once __DIR__ . '/app/models/Comment.php';
-require_once __DIR__ . '/app/models/Like.php';
+require_once __DIR__ . '/app/controllers/PostController.php';
 
-$postId = (int)($_GET['id'] ?? 0);
-$post = Post::findWithUser($postId);
+PostController::show();
 
 if (!$post) {
     flash('error', 'Post não encontrado.');

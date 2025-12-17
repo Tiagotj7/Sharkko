@@ -1,0 +1,3 @@
+-- Seed tags
+-- Since tags are stored in posts, this is just a reference
+-- You can use these in sample posts

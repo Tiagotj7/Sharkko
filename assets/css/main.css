@@ -270,3 +270,36 @@ select {
 .auth-page {
   max-width: 480px;
 }
+
+.search-form {
+  flex: 1;
+  max-width: 280px;
+  margin: 0 1rem;
+}
+.search-form input {
+  width: 100%;
+  padding: .3rem .5rem;
+  border-radius: .4rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: .85rem;
+}
+
+.topbar-inner {
+  gap: .75rem;
+}
+
+.conversation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.conversation-list li {
+  margin-bottom: .5rem;
+}
+.conversation-list a {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}

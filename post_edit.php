@@ -1,49 +1,56 @@
 <?php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/models/User.php';
+require_once __DIR__ . '/app/controllers/PostController.php';
 
-require_login();
-$user = current_user();
+PostController::edit();
+
+$postId = (int)($_GET['id'] ?? 0);
+$post = Post::findById($postId);
+
+if (!$post || (int)$post['user_id'] !== (int)$user['id']) {
+    flash('error', 'Post não encontrado ou você não é o autor.');
+    redirect('feed.php');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf($_POST['csrf'] ?? '')) {
         flash('error', 'Token CSRF inválido.');
-        redirect('profile_edit.php');
+        redirect('post_edit.php?id=' . $postId);
     }
 
-    $name        = trim($_POST['name'] ?? '');
-    $bio         = trim($_POST['bio'] ?? '');
-    $location    = trim($_POST['location'] ?? '');
-    $github_url  = trim($_POST['github_url'] ?? '');
-    $linkedin_url= trim($_POST['linkedin_url'] ?? '');
-    $website_url = trim($_POST['website_url'] ?? '');
-    $theme       = in_array($_POST['theme'] ?? 'dark', ['dark','light']) ? $_POST['theme'] : 'dark';
+    $title         = trim($_POST['title'] ?? '');
+    $description   = trim($_POST['description'] ?? '');
+    $tags          = trim($_POST['tags'] ?? '');
+    $languages     = trim($_POST['languages'] ?? '');
+    $contact_email = trim($_POST['contact_email'] ?? '');
+    $contact_link  = trim($_POST['contact_link'] ?? '');
 
-    $avatarName = $user['avatar'] ?? null;
-    if (!empty($_FILES['avatar']['name'])) {
-        $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+    if ($title === '' || $description === '') {
+        flash('error', 'Título e descrição são obrigatórios.');
+        redirect('post_edit.php?id=' . $postId);
+    }
+
+    $imageName = $post['image'] ?? null;
+    if (!empty($_FILES['image']['name'])) {
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
         if (in_array($ext, $allowed)) {
-            $avatarName = uniqid('avatar_') . '.' . $ext;
-            move_uploaded_file($_FILES['avatar']['tmp_name'], UPLOAD_AVATARS . '/' . $avatarName);
+            $imageName = uniqid('post_') . '.' . $ext;
+            move_uploaded_file($_FILES['image']['tmp_name'], UPLOAD_POSTS . '/' . $imageName);
         }
     }
 
-    User::updateProfile((int)$user['id'], [
-        'name'         => $name,
-        'bio'          => $bio,
-        'location'     => $location,
-        'github_url'   => $github_url,
-        'linkedin_url' => $linkedin_url,
-        'website_url'  => $website_url,
-        'avatar'       => $avatarName,
-        'theme'        => $theme,
+    Post::update($postId, (int)$user['id'], [
+        'title'         => $title,
+        'description'   => $description,
+        'image'         => $imageName,
+        'tags'          => $tags,
+        'languages'     => $languages,
+        'contact_email' => $contact_email,
+        'contact_link'  => $contact_link,
     ]);
 
-    flash('success', 'Perfil atualizado.');
-    redirect('profile.php?id=' . (int)$user['id']);
+    flash('success', 'Projeto atualizado.');
+    redirect('post_show.php?id=' . $postId);
 }
 ?>
 <!DOCTYPE html>
@@ -56,52 +63,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <main class="container main">
   <?php include __DIR__ . '/views/partials/flash.php'; ?>
 
-  <h1>Editar perfil</h1>
+  <h1>Editar projeto</h1>
 
-  <form action="profile_edit.php" method="post" enctype="multipart/form-data" class="card">
+  <form action="post_edit.php?id=<?= (int)$post['id'] ?>" method="post" enctype="multipart/form-data" class="card">
     <input type="hidden" name="csrf" value="<?= esc(csrf_token()) ?>">
 
     <label>
-      Nome
-      <input type="text" name="name" value="<?= esc($user['name']) ?>" required>
+      Título do projeto
+      <input type="text" name="title" value="<?= esc($post['title']) ?>" required>
     </label>
 
     <label>
-      Bio
-      <textarea name="bio" rows="4"><?= esc($user['bio'] ?? '') ?></textarea>
+      Descrição
+      <textarea name="description" rows="6" required><?= esc($post['description']) ?></textarea>
+    </label>
+
+    <?php if (!empty($post['image'])): ?>
+      <p>Imagem atual:</p>
+      <img src="uploads/posts/<?= esc($post['image']) ?>" class="post-image" alt="">
+    <?php endif; ?>
+
+    <label>
+      Nova imagem (opcional)
+      <input type="file" name="image" accept="image/*">
     </label>
 
     <label>
-      Localização
-      <input type="text" name="location" value="<?= esc($user['location'] ?? '') ?>">
+      Linguagens / tecnologias
+      <input type="text" name="languages" value="<?= esc($post['languages']) ?>">
     </label>
 
     <label>
-      GitHub URL
-      <input type="url" name="github_url" value="<?= esc($user['github_url'] ?? '') ?>">
+      Hashtags
+      <input type="text" name="tags" value="<?= esc($post['tags']) ?>">
     </label>
 
     <label>
-      LinkedIn URL
-      <input type="url" name="linkedin_url" value="<?= esc($user['linkedin_url'] ?? '') ?>">
+      E-mail para contato
+      <input type="email" name="contact_email" value="<?= esc($post['contact_email']) ?>">
     </label>
 
     <label>
-      Website / Portfólio
-      <input type="url" name="website_url" value="<?= esc($user['website_url'] ?? '') ?>">
-    </label>
-
-    <label>
-      Avatar (imagem)
-      <input type="file" name="avatar" accept="image/*">
-    </label>
-
-    <label>
-      Tema
-      <select name="theme">
-        <option value="dark" <?= ($user['theme'] ?? 'dark') === 'dark' ? 'selected' : '' ?>>Dark</option>
-        <option value="light" <?= ($user['theme'] ?? 'dark') === 'light' ? 'selected' : '' ?>>Light</option>
-      </select>
+      Link de contato/projeto
+      <input type="url" name="contact_link" value="<?= esc($post['contact_link']) ?>">
     </label>
 
     <button class="btn-primary" type="submit">Salvar</button>

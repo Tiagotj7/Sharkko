@@ -43,7 +43,9 @@ class User
     {
         $pdo = getPDO();
         $stmt = $pdo->prepare(
-            'UPDATE users SET name = ?, bio = ?, location = ?, github_url = ?, linkedin_url = ?, website_url = ?, avatar = ?, theme = ? WHERE id = ?'
+            'UPDATE users
+             SET name = ?, bio = ?, location = ?, github_url = ?, linkedin_url = ?, website_url = ?, avatar = ?, theme = ?
+             WHERE id = ?'
         );
         $stmt->execute([
             $data['name'],
@@ -56,5 +58,21 @@ class User
             $data['theme'],
             $id
         ]);
+    }
+
+    public static function updateSettings(int $id, string $theme, ?string $newPasswordHash = null)
+    {
+        $pdo = getPDO();
+        if ($newPasswordHash) {
+            $stmt = $pdo->prepare(
+                'UPDATE users SET theme = ?, password_hash = ? WHERE id = ?'
+            );
+            $stmt->execute([$theme, $newPasswordHash, $id]);
+        } else {
+            $stmt = $pdo->prepare(
+                'UPDATE users SET theme = ? WHERE id = ?'
+            );
+            $stmt->execute([$theme, $id]);
+        }
     }
 }
