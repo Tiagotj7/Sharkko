@@ -119,5 +119,14 @@
 ├── settings.php              <- tela de configurações (SettingsController)
 ├── search.php                <- busca por posts / usuários / tags
 │
+├── .env                      <- arquivo de configuração de ambiente (DB, etc.)
 ├── .htaccess                 <- (opcional) regras de URL amigável, redirecionos, etc.
 └── README.md                 <- instruções básicas do projeto
+
+## Instalação
+
+1. Clone o repositório.
+2. Copie o arquivo `.env` e ajuste as credenciais do banco de dados.
+3. Execute os scripts SQL em `sql/schema.sql` para criar as tabelas.
+4. Opcionalmente, execute `sql/seed_languages.sql` e `sql/seed_tags.sql` para dados iniciais.
+5. Configure o servidor web para apontar para a pasta raiz do projeto.
