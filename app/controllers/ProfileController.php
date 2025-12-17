@@ -2,8 +2,7 @@
 // app/controllers/ProfileController.php
 require_once __DIR__ . '/../helpers/auth.php';
 require_once __DIR__ . '/../helpers/validation.php';
-require_once __DIR__ . '/../helpers/csrf.php';
-require_once __DIR__ . '/../helpers/upload.php';
+require_once __DIR__ . '/../helpers/csrf.php';require_once __DIR__ . '/../helpers/utils.php';require_once __DIR__ . '/../helpers/upload.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Post.php';
 

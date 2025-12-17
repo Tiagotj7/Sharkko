@@ -2,6 +2,7 @@
 // app/controllers/FavoriteController.php
 require_once __DIR__ . '/../helpers/auth.php';
 require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
 require_once __DIR__ . '/../models/Favorite.php';
 
 class FavoriteController
