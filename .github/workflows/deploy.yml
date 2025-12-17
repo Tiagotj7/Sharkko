@@ -19,13 +19,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
           port: 22
-          local-path: ./
-          remote-path: /htdocs/
-          exclude: |
-            **/.git/**
-            **/.github/**
-            **/.gitignore
-            **/README.md
-            **/.env
-            **/uploads/**
+          local_path: ./
+          remote_path: /htdocs/
           
