@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <?php include __DIR__ . '/../partials/head.php'; ?>
+</head>
+<body>
+<?php include __DIR__ . '/../partials/header.php'; ?>
+
+<main class="container main">
+  <?php include __DIR__ . '/../partials/flash.php'; ?>
+
 <section class="new-post-card">
   <h2>O que você está construindo hoje?</h2>
   <a class="btn-primary" href="post_create.php">Criar novo projeto</a>
@@ -64,3 +75,9 @@
     </article>
   <?php endforeach; ?>
 </section>
+
+</main>
+<?php include __DIR__ . '/../partials/footer.php'; ?>
+<script src="assets/js/theme-toggle.js"></script>
+</body>
+</html>

@@ -15,6 +15,7 @@ class PostController
     {
         require_login();
 
+        $user = current_user();
         $posts = Post::allWithUser();
 
         require_once __DIR__ . '/../views/feed/index.php';
