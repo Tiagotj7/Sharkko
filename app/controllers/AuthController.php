@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../helpers/auth.php';
 require_once __DIR__ . '/../helpers/validation.php';
 require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
 require_once __DIR__ . '/../models/User.php';
 
 class AuthController
@@ -41,7 +42,7 @@ class AuthController
         }
 
         // Exibe o formulário
-        require_once __DIR__ . '/../views/auth/login.php';
+        require_once __DIR__ . '/../../views/auth/login.php';
     }
 
     public static function register()
@@ -90,7 +91,7 @@ class AuthController
         remember_old($data);
 
         // Exibe o formulário
-        require_once __DIR__ . '/../views/auth/register.php';
+        require_once __DIR__ . '/../../views/auth/register.php';
     }
 
     public static function logout()
