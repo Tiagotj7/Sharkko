@@ -1,35 +1,36 @@
-name: 🚀 Deploy via FTP
+name: Deploy FTP
 
 on:
   push:
     branches:
-      - main # ou "master" se for o seu branch principal
+      - main
+      - master
 
 jobs:
-  ftp-deploy:
+  deploy:
+    name: Deploy via FTP
     runs-on: ubuntu-latest
+
     steps:
-      - name: 🧾 Checkout do código
-        uses: actions/checkout@v3
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
 
-- name: Deploy via FTP
-  uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-  with:
-    server: ${{ secrets.FTP_SERVER }}
-    username: ${{ secrets.FTP_USERNAME }}
-    password: ${{ secrets.FTP_PASSWORD }}
-    protocol: ftp
-    port: 21
-    local-dir: ./
-    server-dir: /htdocs/
-    exclude: |
-      **/.git/**
-      **/.github/**
-      **/.gitignore
-      **/README.md
-      **/.env
-      **/uploads/**
-    timeout: 600
-    state-name: .ftp-deploy-sync-state.json
-
-          
+      - name: Deploy para o servidor FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./
+          server-dir: /htdocs/
+          exclude: |
+            **/.git/**
+            **/.github/**
+            **/.gitignore
+            **/README.md
+            **/.env
+            **/uploads/**
+          timeout: 600
+          state-name: .ftp-deploy-sync-state.json
