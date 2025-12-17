@@ -19,8 +19,8 @@ jobs:
           username: ${{ secrets.FTP_USERNAME}}
           password: ${{ secrets.FTP_PASSWORD}}
 
-          protocol: sftp
-          port: 22
+          protocol: ftp
+          port: 21
           local-dir: ./
           server-dir: /htdocs/ # pasta do seu servidor FTP
           exclude: |
@@ -31,4 +31,6 @@ jobs:
             **/.env
             **/uploads/**
           timeout: 300
+          security: loose
+          state-name: .ftp-deploy-sync-state.json
           
