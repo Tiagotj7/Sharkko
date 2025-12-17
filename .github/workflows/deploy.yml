@@ -23,3 +23,4 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: /htdocs/ # pasta do seu servidor FTP
+          
