@@ -1,4 +1,4 @@
-name: Deploy AlwaysData (SCP)
+name: Deploy AlwaysData (SSH)
 
 on:
   push:
@@ -16,11 +16,16 @@ jobs:
       - name: Deploy via SCP (AlwaysData)
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ssh.alwaysdata.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          host: ssh.alwaysdata.net
           port: 22
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+
           source: "."
-          target: "/home/${{ secrets.FTP_USERNAME }}/www/"
+          target: "/home/${{ secrets.SSH_USERNAME }}/www/"
+
+          overwrite: true
           rm: false
-          strip_components: 0
+
+          timeout: 120s
+          command_timeout: 10m
