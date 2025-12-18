@@ -1,18 +1,33 @@
 <?php
-require_once __DIR__ . '/app/controllers/PostController.php';
+// ===============================
+// DEBUG (remova depois)
+// ===============================
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-PostController::create();
+// ===============================
+// BOOTSTRAP / HELPERS
+// ===============================
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config/bootstrap.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/controllers/PostController.php';
+
+// ===============================
+// PROCESSA POST
+// ===============================
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     if (!verify_csrf($_POST['csrf'] ?? '')) {
         flash('error', 'Token CSRF inválido.');
         redirect('post_create.php');
     }
 
-    $title       = trim($_POST['title'] ?? '');
-    $description = trim($_POST['description'] ?? '');
-    $tags        = trim($_POST['tags'] ?? '');
-    $languages   = trim($_POST['languages'] ?? '');
-    $contact_email = trim($_POST['contact_email'] ?? '');
-    $contact_link  = trim($_POST['contact_link'] ?? '');
+    $title           = trim($_POST['title'] ?? '');
+    $description     = trim($_POST['description'] ?? '');
+    $tags            = trim($_POST['tags'] ?? '');
+    $languages       = trim($_POST['languages'] ?? '');
+    $contact_email   = trim($_POST['contact_email'] ?? '');
+    $contact_link    = trim($_POST['contact_link'] ?? '');
 
     remember_old($_POST);
 
@@ -21,17 +36,32 @@ PostController::create();
         redirect('post_create.php');
     }
 
+    // ===============================
+    // UPLOAD
+    // ===============================
     $imageName = null;
+
     if (!empty($_FILES['image']['name'])) {
         $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-        if (in_array($ext, $allowed)) {
-            $imageName = uniqid('post_') . '.' . $ext;
-            move_uploaded_file($_FILES['image']['tmp_name'], UPLOAD_POSTS . '/' . $imageName);
+
+        if (!in_array($ext, $allowed)) {
+            flash('error', 'Formato de imagem inválido.');
+            redirect('post_create.php');
         }
+
+        $imageName = uniqid('post_') . '.' . $ext;
+        move_uploaded_file(
+            $_FILES['image']['tmp_name'],
+            UPLOAD_POSTS . '/' . $imageName
+        );
     }
 
-    $postId = Post::create((int)$user['id'], [
+    // ===============================
+    // SALVAR POST
+    // ===============================
+    $postId = PostController::create([
+        'user_id'       => (int)$user['id'],
         'title'         => $title,
         'description'   => $description,
         'image'         => $imageName,
@@ -43,62 +73,9 @@ PostController::create();
 
     flash('success', 'Projeto criado com sucesso!');
     redirect('post_show.php?id=' . $postId);
+}
 
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <?php include __DIR__ . '/views/partials/head.php'; ?>
-</head>
-<body>
-<?php include __DIR__ . '/views/partials/header.php'; ?>
-<main class="container main">
-  <?php include __DIR__ . '/views/partials/flash.php'; ?>
-
-  <h1>Novo projeto</h1>
-
-  <form action="post_create.php" method="post" enctype="multipart/form-data" class="card">
-    <input type="hidden" name="csrf" value="<?= esc(csrf_token()) ?>">
-
-    <label>
-      Título do projeto
-      <input type="text" name="title" value="<?= esc(old('title')) ?>" required>
-    </label>
-
-    <label>
-      Descrição
-      <textarea name="description" rows="6" required><?= esc(old('description')) ?></textarea>
-    </label>
-
-    <label>
-      Imagem do projeto (opcional)
-      <input type="file" name="image" accept="image/*">
-    </label>
-
-    <label>
-      Linguagens / tecnologias (separadas por vírgula)
-      <input type="text" name="languages" placeholder="PHP, MySQL, JavaScript" value="<?= esc(old('languages')) ?>">
-    </label>
-
-    <label>
-      Hashtags (separadas por vírgula)
-      <input type="text" name="tags" placeholder="startup, backend, frontend" value="<?= esc(old('tags')) ?>">
-    </label>
-
-    <label>
-      E-mail para contato (opcional)
-      <input type="email" name="contact_email" value="<?= esc(old('contact_email')) ?>">
-    </label>
-
-    <label>
-      Link para contato/projeto (GitHub, site, etc)
-      <input type="url" name="contact_link" value="<?= esc(old('contact_link')) ?>">
-    </label>
-
-    <button class="btn-primary" type="submit">Publicar</button>
-  </form>
-</main>
-<?php include __DIR__ . '/views/partials/footer.php'; ?>
-<script src="assets/js/theme-toggle.js"></script>
-</body>
-</html>
+// ===============================
+// VIEW (GET)
+// ===============================
+require $_SERVER['DOCUMENT_ROOT'] . '/app/views/post/create.php';
