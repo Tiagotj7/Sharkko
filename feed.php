@@ -1,5 +1,7 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config/bootstrap.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/controllers/PostController.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-PostController::index();
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config/bootstrap.php';
+
+echo "BOOTSTRAP OK";
