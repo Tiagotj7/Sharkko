@@ -28,4 +28,4 @@ jobs:
             --exclude ".env" \
             --exclude "node_modules" \
             ./ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/www/
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/www/
