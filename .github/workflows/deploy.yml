@@ -10,10 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Deploy via FTPS (AlwaysData)
+      - name: Deploy via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp-${{ secrets.FTP_USERNAME }}.alwaysdata.net
@@ -22,7 +21,6 @@ jobs:
 
           protocol: ftps
           port: 21
-
           security: loose
           timeout: 120000
           log-level: verbose
@@ -38,3 +36,4 @@ jobs:
             **/.github/**
             **/.env
             **/node_modules/**
+            app/**
