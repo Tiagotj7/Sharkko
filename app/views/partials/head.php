@@ -1,10 +1,9 @@
 <?php
-// views/partials/head.php
+// app/views/partials/head.php
 
-require_once __DIR__ . '/../config/bootstrap.php';
+require_once __DIR__ . '/../../config/bootstrap.php';
 
-
-$user = current_user();
+$user  = current_user();
 $theme = $user['theme'] ?? 'dark';
 ?>
 <meta charset="UTF-8">
