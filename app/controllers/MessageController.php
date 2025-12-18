@@ -1,11 +1,11 @@
 <?php
 // app/controllers/MessageController.php
-require_once __DIR__ . '/helpers/auth.php';
-require_once __DIR__ . '/helpers/validation.php';
-require_once __DIR__ . '/helpers/csrf.php';
-require_once __DIR__ . '/helpers/utils.php';
-require_once __DIR__ . '/models/Conversation.php';
-require_once __DIR__ . '/models/Message.php';
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/validation.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../models/Conversation.php';
+require_once __DIR__ . '/../models/Message.php';
 
 class MessageController
 {
