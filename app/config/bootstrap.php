@@ -1,8 +1,15 @@
 <?php
+
+define('BASE_PATH', dirname(__DIR__, 2));
+
+require_once BASE_PATH . '/app/config/config.php';
+require_once BASE_PATH . '/app/database/connection.php';
+
+require_once BASE_PATH . '/app/helpers/auth.php';
+require_once BASE_PATH . '/app/helpers/csrf.php';
+require_once BASE_PATH . '/app/helpers/utils.php';
+require_once BASE_PATH . '/app/helpers/validation.php';
+require_once BASE_PATH . '/app/helpers/upload.php';
+
+
 session_start();
-
-define('UPLOAD_POSTS', $_SERVER['DOCUMENT_ROOT'] . '/uploads/posts');
-
-require_once __DIR__ . '/helpers.php';
-require_once __DIR__ . '/auth.php';
-require_once __DIR__ . '/database.php';
