@@ -2,7 +2,7 @@
 // app/config/config.php
 
 // Caminhos
-define('APP_PATH', __DIR__ . '/..');
+define('APP_PATH', __DIR__ . '/app');
 define('ROOT_PATH', dirname(__DIR__, 2));
 
 // Load environment variables from .env file
