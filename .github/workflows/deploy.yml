@@ -1,4 +1,4 @@
-name: Deploy AlwaysData (FTPS)
+name: Deploy to AlwaysData (FTPS)
 
 on:
   push:
@@ -16,15 +16,21 @@ jobs:
       - name: Deploy via FTPS (AlwaysData)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp-SEUUSUARIO.alwaysdata.net
+          server: ftp-${{ secrets.FTP_USERNAME }}.alwaysdata.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
           protocol: ftps
           port: 21
 
+          security: loose          # 🔑 ESSENCIAL no AlwaysData
+          passive: true            # 🔑 OBRIGATÓRIO
+          timeout: 60000
+
           local-dir: ./
           server-dir: /www/
+
+          dangerous-clean-slate: false
 
           exclude: |
             **/.git/**
