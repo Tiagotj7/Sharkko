@@ -1,8 +1,6 @@
 <?php
 // app/views/partials/header.php
 
-require_once __DIR__ . '/app/config/bootstrap.php';
-
 $user = current_user();
 ?>
 <header class="topbar">

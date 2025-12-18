@@ -1,5 +1,9 @@
 <?php
 // app/controllers/AuthController.php
+
+require_once BASE_PATH . '/app/views/auth/login.php';
+
+
 require_once __DIR__ . '/app/helpers/auth.php';
 require_once __DIR__ . '/app/helpers/validation.php';
 require_once __DIR__ . '/app/helpers/csrf.php';
