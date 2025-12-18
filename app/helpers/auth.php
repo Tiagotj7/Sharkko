@@ -1,11 +1,8 @@
 <?php
 // app/helpers/auth.php
-require_once __DIR__ . '/database/connection.php';
-require_once __DIR__ . '/models/User.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../database/connection.php';
+require_once __DIR__ . '/../models/User.php';
 
 function login_user(int $userId) {
     $_SESSION['user_id'] = $userId;
