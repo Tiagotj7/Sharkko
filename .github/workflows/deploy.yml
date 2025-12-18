@@ -1,4 +1,4 @@
-name: Deploy AlwaysData (FTP)
+name: Deploy AlwaysData (FTPS)
 
 on:
   push:
@@ -13,14 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP (AlwaysData)
+      - name: Deploy via FTPS (AlwaysData)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp-tiagotj7dev.alwaysdata.net
+          server: ftp-SEUUSUARIO.alwaysdata.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
 
-          protocol: ftp
+          protocol: ftps
           port: 21
 
           local-dir: ./
