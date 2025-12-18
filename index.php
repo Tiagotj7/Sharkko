@@ -17,10 +17,10 @@ $posts = Post::allWithUser();
   <?php include __DIR__ . '/app/views/partials/head.php'; ?>
 </head>
 <body>
-<?php include __DIR__ . '/views/partials/header.php'; ?>
+<?php include __DIR__ . '/app/views/partials/header.php'; ?>
 
 <main class="container main">
-  <?php include __DIR__ . '/views/partials/flash.php'; ?>
+  <?php include __DIR__ . '/app/views/partials/flash.php'; ?>
 
   <?php if (!$user): ?>
     <section class="hero">
@@ -93,7 +93,7 @@ $posts = Post::allWithUser();
   </section>
 </main>
 
-<?php include __DIR__ . '/views/partials/footer.php'; ?>
+<?php include __DIR__ . '/app/views/partials/footer.php'; ?>
 <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
