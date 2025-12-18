@@ -1,4 +1,4 @@
-name: Deploy AlwaysData (SFTP)
+name: Deploy AlwaysData (SCP)
 
 on:
   push:
@@ -13,22 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy via SFTP (AlwaysData)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy via SCP (AlwaysData)
+        uses: appleboy/scp-action@v0.1.7
         with:
-          server: ssh.alwaysdata.com
+          host: ssh.alwaysdata.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
           port: 22
-          local-dir: ./
-          server-dir: /home/${{ secrets.FTP_USERNAME }}/www/
-          exclude: |
-            **/.git/**
-            **/.github/**
-            **/.gitignore
-            **/README.md
-            **/.env
-            **/uploads/**
-          timeout: 1200
-          state-name: .ftp-deploy-sync-state.json
+          source: "."
+          target: "/home/${{ secrets.FTP_USERNAME }}/www/"
+          rm: false
+          strip_components: 0
