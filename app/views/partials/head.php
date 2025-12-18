@@ -1,7 +1,7 @@
 <?php
 // views/partials/head.php
 
-require_once __DIR__ . '/app/config/bootstrap.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 
 $user = current_user();
