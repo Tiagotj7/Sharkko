@@ -1,11 +1,11 @@
 <?php
 // app/controllers/MessageController.php
-require_once __DIR__ . '/../helpers/auth.php';
-require_once __DIR__ . '/../helpers/validation.php';
-require_once __DIR__ . '/../helpers/csrf.php';
-require_once __DIR__ . '/../helpers/utils.php';
-require_once __DIR__ . '/../models/Conversation.php';
-require_once __DIR__ . '/../models/Message.php';
+require_once __DIR__ . '/helpers/auth.php';
+require_once __DIR__ . '/helpers/validation.php';
+require_once __DIR__ . '/helpers/csrf.php';
+require_once __DIR__ . '/helpers/utils.php';
+require_once __DIR__ . '/models/Conversation.php';
+require_once __DIR__ . '/models/Message.php';
 
 class MessageController
 {
@@ -16,7 +16,7 @@ class MessageController
         $user = current_user();
         $conversations = Conversation::forUser($user['id']);
 
-        require_once __DIR__ . '/../views/messages/index.php';
+        require_once __DIR__ . '/views/messages/index.php';
     }
 
     public static function show()
@@ -35,7 +35,7 @@ class MessageController
         $other = Conversation::otherParticipant($conversationId, $user['id']);
         $messages = Message::forConversation($conversationId);
 
-        require_once __DIR__ . '/../views/messages/conversation.php';
+        require_once __DIR__ . '/views/messages/conversation.php';
     }
 
     public static function send()
