@@ -1,4 +1,4 @@
-name: Deploy FTP
+name: Deploy InfinityFree
 
 on:
   push:
@@ -6,22 +6,17 @@ on:
       - main
       - master
 
-permissions:
-  contents: read
-
 jobs:
   deploy:
-    name: Deploy via FTP
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do repositório
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Deploy para o servidor via FTP
+      - name: Deploy via FTP (InfinityFree)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_HOST }}
+          server: ftpupload.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
@@ -35,5 +30,5 @@ jobs:
             **/README.md
             **/.env
             **/uploads/**
-          timeout: 600
+          timeout: 1200
           state-name: .ftp-deploy-sync-state.json
