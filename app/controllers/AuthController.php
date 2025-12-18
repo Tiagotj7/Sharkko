@@ -42,7 +42,7 @@ class AuthController
         }
 
         // Exibe o formulário
-        require_once __DIR__ . '/../../views/auth/login.php';
+        require_once __DIR__ . '/app/views/auth/login.php';
     }
 
     public static function register()
