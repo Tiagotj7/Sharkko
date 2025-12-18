@@ -1,7 +1,7 @@
 <?php
-// views/partials/header.php
-require_once __DIR__ . '/app/config/bootstrap.php';
+// app/views/partials/header.php
 
+require_once __DIR__ . '/../../config/bootstrap.php';
 
 $user = current_user();
 ?>
@@ -10,7 +10,12 @@ $user = current_user();
     <a href="index.php" class="logo">DevNetwork</a>
 
     <form action="search.php" method="get" class="search-form">
-      <input type="text" name="q" placeholder="Buscar projetos, devs..." value="<?= esc($_GET['q'] ?? '') ?>">
+      <input
+        type="text"
+        name="q"
+        placeholder="Buscar projetos, devs..."
+        value="<?= esc($_GET['q'] ?? '') ?>"
+      >
     </form>
 
     <nav class="nav-links">
@@ -26,7 +31,9 @@ $user = current_user();
       <button id="themeToggle" class="btn-secondary">Tema</button>
 
       <?php if ($user): ?>
-        <a href="profile.php?id=<?= (int)$user['id'] ?>" class="user-name"><?= esc($user['name']) ?></a>
+        <a href="profile.php?id=<?= (int)$user['id'] ?>" class="user-name">
+          <?= esc($user['name']) ?>
+        </a>
         <a href="logout.php" class="btn-outline">Sair</a>
       <?php else: ?>
         <a href="login.php" class="btn-outline">Login</a>
