@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 // ===============================
 // BOOTSTRAP / HELPERS
 // ===============================
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config/bootstrap.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/app/bootstrap.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/app/controllers/PostController.php';
 
 // ===============================
