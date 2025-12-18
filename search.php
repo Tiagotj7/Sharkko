@@ -1,10 +1,7 @@
 <?php
 // search.php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/models/Post.php';
-require_once __DIR__ . '/app/models/Like.php';
-require_once __DIR__ . '/app/models/User.php';
+require_once __DIR__ . '/app/config/bootstrap.php';
+
 
 $q = trim($_GET['q'] ?? '');
 
