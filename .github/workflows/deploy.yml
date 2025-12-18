@@ -23,13 +23,14 @@ jobs:
           protocol: ftps
           port: 21
 
-          security: loose          # 🔑 ESSENCIAL no AlwaysData
-          passive: true            # 🔑 OBRIGATÓRIO
-          timeout: 60000
+          security: loose
+          timeout: 120000
+          log-level: verbose
 
           local-dir: ./
           server-dir: /www/
 
+          state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
 
           exclude: |
