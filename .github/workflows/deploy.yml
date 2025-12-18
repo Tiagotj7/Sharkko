@@ -23,7 +23,7 @@ jobs:
           port: 21
 
           local-dir: ./
-          server-dir: /www/
+          server-dir: /home/tiagotj7dev/
 
           exclude: |
             **/.git/**
