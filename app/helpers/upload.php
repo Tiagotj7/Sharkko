@@ -1,6 +1,6 @@
 <?php
 // app/helpers/upload.php
-require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/app/config/config.php';
 
 function upload_image(array $file, string $subdir): ?string
 {

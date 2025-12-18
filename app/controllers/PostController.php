@@ -1,14 +1,14 @@
 <?php
 // app/controllers/PostController.php
-require_once __DIR__ . '/../helpers/auth.php';
-require_once __DIR__ . '/../helpers/validation.php';
-require_once __DIR__ . '/../helpers/csrf.php';
-require_once __DIR__ . '/../helpers/upload.php';
-require_once __DIR__ . '/../helpers/utils.php';
-require_once __DIR__ . '/../models/Post.php';
-require_once __DIR__ . '/../models/Like.php';
-require_once __DIR__ . '/../models/Comment.php';
-require_once __DIR__ . '/../models/Favorite.php';
+require_once __DIR__ . '/app/helpers/auth.php';
+require_once __DIR__ . '/app/helpers/validation.php';
+require_once __DIR__ . '/app/helpers/csrf.php';
+require_once __DIR__ . '/app/helpers/upload.php';
+require_once __DIR__ . '/app/helpers/utils.php';
+require_once __DIR__ . '/app/models/Post.php';
+require_once __DIR__ . '/app/models/Like.php';
+require_once __DIR__ . '/app/models/Comment.php';
+require_once __DIR__ . '/app/models/Favorite.php';
 
 class PostController
 {
@@ -67,7 +67,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/app/views/feed/index.php';
 
         remember_old($data);
 
-        require_once __DIR__ . '/../views/post/create.php';
+        require_once __DIR__ . '/app/views/post/create.php';
     }
 
     public static function show()
@@ -87,7 +87,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/app/views/feed/index.php';
         $userLiked = Like::userLiked($id, $user['id']);
         $userFavorited = Favorite::userFavorited($id, $user['id']);
 
-        require_once __DIR__ . '/../views/post/show.php';
+        require_once __DIR__ . '/app/views/post/show.php';
     }
 
     public static function edit()
@@ -147,7 +147,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/app/views/feed/index.php';
 
         remember_old($data);
 
-        require_once __DIR__ . '/../views/post/edit.php';
+        require_once __DIR__ . '/app/views/post/edit.php';
     }
 
     public static function update()

@@ -1,6 +1,6 @@
 <?php
 // app/models/Like.php
-require_once __DIR__ . '/../database/connection.php';
+require_once __DIR__ . '/app/database/connection.php';
 
 class Like
 {

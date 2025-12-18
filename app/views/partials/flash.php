@@ -1,6 +1,6 @@
 <?php
 // app/views/partials/flash.php
-require_once __DIR__ . '/../../helpers/utils.php';
+require_once __DIR__ . '/app/helpers/utils.php';
 ?>
 
 <?php if ($msg = flash('success')): ?>

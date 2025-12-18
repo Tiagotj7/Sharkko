@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include __DIR__ . '/../partials/head.php'; ?>
+  <?php include __DIR__ . '/app/partials/head.php'; ?>
 </head>
 <body>
-<?php include __DIR__ . '/../partials/header.php'; ?>
+<?php include __DIR__ . '/app/partials/header.php'; ?>
 <main class="container main auth-page">
-  <?php include __DIR__ . '/../partials/flash.php'; ?>
+  <?php include __DIR__ . '/app/partials/flash.php'; ?>
 
   <h1>Criar conta</h1>
   <form action="register.php" method="post" class="card">
@@ -36,7 +36,7 @@
     <p>Já tem conta? <a href="login.php">Entrar</a></p>
   </form>
 </main>
-<?php include __DIR__ . '/../partials/footer.php'; ?>
+<?php include __DIR__ . '/app/partials/footer.php'; ?>
 <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
