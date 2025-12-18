@@ -14,7 +14,7 @@ $posts = Post::allWithUser();
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include __DIR__ . '/views/partials/head.php'; ?>
+  <?php include __DIR__ . '/app/views/partials/head.php'; ?>
 </head>
 <body>
 <?php include __DIR__ . '/views/partials/header.php'; ?>

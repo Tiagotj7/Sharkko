@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include $_SERVER['DOCUMENT_ROOT'] . '/views/partials/head.php'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/app/views/partials/head.php'; ?>
 </head>
 <body>
 
