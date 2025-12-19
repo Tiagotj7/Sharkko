@@ -1,36 +1,38 @@
 <?php
+// app/controllers/ProfileController.php
 
-require_once BASE_PATH . '/helpers/auth.php';
-require_once BASE_PATH . '/models/User.php';
-require_once BASE_PATH . '/models/Post.php';
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Post.php';
 
 class ProfileController
 {
-    public static function show()
+    public static function show(): void
     {
         require_login();
 
         $profileId = (int)($_GET['id'] ?? 0);
 
-        $profile = User::findById($profileId);
+        if ($profileId <= 0) {
+            flash('error', 'Usuário inválido.');
+            redirect('index.php');
+        }
 
-        if (!$profile) {
+        // 🔹 usuário logado
+        $user = current_user();
+
+        // 🔹 usuário do perfil
+        $profileUser = User::findById($profileId);
+
+        if (!$profileUser) {
             flash('error', 'Usuário não encontrado.');
             redirect('index.php');
         }
 
-        $posts   = Post::byUser($profileId);
-        $current = current_user();
+        // 🔹 posts do usuário
+        $posts = Post::byUser($profileId);
 
-        require BASE_PATH . '/views/profile/show.php';
-    }
-
-    public static function edit()
-    {
-        require_login();
-
-        $user = current_user();
-
-        require BASE_PATH . '/views/profile/edit.php';
+        // 🔹 carrega a view COM as variáveis
+        require __DIR__ . '/../views/profile/show.php';
     }
 }
