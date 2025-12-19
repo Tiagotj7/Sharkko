@@ -28,5 +28,5 @@ switch ($route) {
 
     default:
         http_response_code(404);
-        echo 'Página não encontrada';
+        echo '404';
 }

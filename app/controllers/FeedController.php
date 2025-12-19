@@ -6,7 +6,7 @@ class FeedController
     {
         require_login();
 
-        // SEMPRE definir $posts
+        // DEFINIÇÃO OBRIGATÓRIA
         $posts = [];
 
         require BASE_PATH . '/views/feed/index.php';
