@@ -6,10 +6,9 @@ class FeedController
     {
         require_login();
 
-        // Por enquanto feed vazio
+        // SEMPRE definir $posts
         $posts = [];
 
-        // Carrega a view
         require BASE_PATH . '/views/feed/index.php';
     }
 }
