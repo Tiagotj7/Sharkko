@@ -1,40 +1,54 @@
 <?php
-// search.php
-require_once __DIR__ . '/app/config/bootstrap.php';
+// ===============================
+// BASE PATH (OBRIGATÓRIO)
+// ===============================
+define('BASE_PATH', __DIR__ . '/app');
 
+// ===============================
+// BOOTSTRAP
+// ===============================
+require_once BASE_PATH . '/config/bootstrap.php';
 
+// ===============================
+// BUSCA
+// ===============================
 $q = trim($_GET['q'] ?? '');
 
 $posts = [];
 $users = [];
 
 if ($q !== '') {
-    $pdo = getPDO();
+    $pdo  = getPDO();
     $like = '%' . $q . '%';
 
-    // Posts
+    // POSTS
     $sqlPosts = '
         SELECT p.*, u.name AS user_name, u.avatar AS user_avatar
         FROM posts p
         JOIN users u ON u.id = p.user_id
-        WHERE p.title LIKE ? OR p.description LIKE ? OR p.tags LIKE ? OR p.languages LIKE ?
+        WHERE p.title LIKE ?
+           OR p.description LIKE ?
+           OR p.tags LIKE ?
+           OR p.languages LIKE ?
         ORDER BY p.created_at DESC
         LIMIT 50
     ';
     $stmt = $pdo->prepare($sqlPosts);
     $stmt->execute([$like, $like, $like, $like]);
-    $posts = $stmt->fetchAll();
+    $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Usuários
+    // USUÁRIOS
     $sqlUsers = '
-        SELECT * FROM users
-        WHERE name LIKE ? OR bio LIKE ?
+        SELECT *
+        FROM users
+        WHERE name LIKE ?
+           OR bio LIKE ?
         ORDER BY created_at DESC
         LIMIT 50
     ';
     $stmt = $pdo->prepare($sqlUsers);
     $stmt->execute([$like, $like]);
-    $users = $stmt->fetchAll();
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $user = current_user();
@@ -42,12 +56,14 @@ $user = current_user();
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include __DIR__ . '/app/views/partials/head.php'; ?>
+  <?php include BASE_PATH . '/views/partials/head.php'; ?>
 </head>
 <body>
-<?php include __DIR__ . '/app/views/partials/header.php'; ?>
+
+<?php include BASE_PATH . '/views/partials/header.php'; ?>
+
 <main class="container main">
-  <?php include __DIR__ . '/app/views/partials/flash.php'; ?>
+  <?php include BASE_PATH . '/views/partials/flash.php'; ?>
 
   <h1>Buscar</h1>
 
@@ -63,8 +79,10 @@ $user = current_user();
     <p>Digite algo para buscar.</p>
   <?php else: ?>
 
+    <!-- USUÁRIOS -->
     <section class="card">
       <h2>Usuários</h2>
+
       <?php if (empty($users)): ?>
         <p>Nenhum usuário encontrado.</p>
       <?php else: ?>
@@ -78,7 +96,12 @@ $user = current_user();
               <?php endif; ?>
             </div>
             <div>
-              <strong><a href="profile.php?id=<?= (int)$u['id'] ?>"><?= esc($u['name']) ?></a></strong>
+              <strong>
+                <a href="profile.php?id=<?= (int)$u['id'] ?>">
+                  <?= esc($u['name']) ?>
+                </a>
+              </strong>
+
               <?php if (!empty($u['bio'])): ?>
                 <p><?= nl2br(esc(substr($u['bio'], 0, 120))) ?>...</p>
               <?php endif; ?>
@@ -88,15 +111,16 @@ $user = current_user();
       <?php endif; ?>
     </section>
 
+    <!-- POSTS -->
     <section class="feed">
       <h2>Projetos</h2>
+
       <?php if (empty($posts)): ?>
         <p>Nenhum projeto encontrado.</p>
       <?php else: ?>
         <?php foreach ($posts as $post): ?>
-          <?php
-            $likesCount = Like::countForPost((int)$post['id']);
-          ?>
+          <?php $likesCount = Like::countForPost((int)$post['id']); ?>
+
           <article class="post-card">
             <header class="post-header">
               <div class="post-author">
@@ -113,13 +137,21 @@ $user = current_user();
                 </div>
               </div>
             </header>
+
             <div class="post-body">
-              <h3><a href="post_show.php?id=<?= (int)$post['id'] ?>"><?= esc($post['title']) ?></a></h3>
+              <h3>
+                <a href="post_show.php?id=<?= (int)$post['id'] ?>">
+                  <?= esc($post['title']) ?>
+                </a>
+              </h3>
               <p><?= nl2br(esc(substr($post['description'], 0, 220))) ?>...</p>
             </div>
+
             <footer class="post-footer">
               <span><?= $likesCount ?> curtidas</span>
-              <a href="post_show.php?id=<?= (int)$post['id'] ?>" class="btn-link">Ver detalhes</a>
+              <a href="post_show.php?id=<?= (int)$post['id'] ?>" class="btn-link">
+                Ver detalhes
+              </a>
             </footer>
           </article>
         <?php endforeach; ?>
@@ -128,7 +160,8 @@ $user = current_user();
 
   <?php endif; ?>
 </main>
-<?php include __DIR__ . '/app/views/partials/footer.php'; ?>
+
+<?php include BASE_PATH . '/views/partials/footer.php'; ?>
 <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
