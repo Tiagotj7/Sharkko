@@ -1,6 +1,8 @@
 <?php
 // app/controllers/AuthController.php
 
+define('BASE_PATH', __DIR__ . '/app');
+
 require_once BASE_PATH . '/config/config.php';
 
 require_once __DIR__ . '/../helpers/auth.php';
