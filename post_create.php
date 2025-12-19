@@ -7,10 +7,18 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // ===============================
-// BOOTSTRAP / HELPERS
+// BASE_PATH + BOOTSTRAP
 // ===============================
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/bootstrap.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/controllers/PostController.php';
+define('BASE_PATH', __DIR__ . '/app');
+
+require_once BASE_PATH . '/config/bootstrap.php';
+require_once BASE_PATH . '/controllers/PostController.php';
+
+// ===============================
+// USUÁRIO LOGADO
+// ===============================
+require_login();
+$user = current_user();
 
 // ===============================
 // PROCESSA POST
@@ -61,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // SALVAR POST
     // ===============================
     $postId = PostController::create([
-        'user_id'       => (int)$user['id'],
+        'user_id'       => (int) $user['id'],
         'title'         => $title,
         'description'   => $description,
         'image'         => $imageName,
@@ -72,10 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     flash('success', 'Projeto criado com sucesso!');
-    redirect('post_show.php?id=' . $postId);
+    redirect('index.php?r=post_show&id=' . $postId);
 }
 
 // ===============================
 // VIEW (GET)
 // ===============================
-require $_SERVER['DOCUMENT_ROOT'] . '/app/views/post/create.php';
+require BASE_PATH . '/views/post/create.php';
