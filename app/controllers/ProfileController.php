@@ -2,11 +2,16 @@
 // app/controllers/ProfileController.php
 
 require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../helpers/upload.php';
+
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Post.php';
 
 class ProfileController
 {
+    // 🔹 VER PERFIL
     public static function show(): void
     {
         require_login();
@@ -18,10 +23,7 @@ class ProfileController
             redirect('index.php');
         }
 
-        // 🔹 usuário logado
         $user = current_user();
-
-        // 🔹 usuário do perfil
         $profileUser = User::findById($profileId);
 
         if (!$profileUser) {
@@ -29,10 +31,51 @@ class ProfileController
             redirect('index.php');
         }
 
-        // 🔹 posts do usuário
         $posts = Post::byUser($profileId);
 
-        // 🔹 carrega a view COM as variáveis
         require __DIR__ . '/../views/profile/show.php';
+    }
+
+    // 🔹 EDITAR PERFIL
+    public static function edit(): void
+    {
+        require_login();
+
+        $user = current_user();
+        $errors = [];
+        $data = $user;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+                $errors[] = 'Token CSRF inválido.';
+            } else {
+                $data['name'] = trim($_POST['name'] ?? '');
+                $data['bio'] = trim($_POST['bio'] ?? '');
+                $data['location'] = trim($_POST['location'] ?? '');
+                $data['github_url'] = trim($_POST['github_url'] ?? '');
+                $data['linkedin_url'] = trim($_POST['linkedin_url'] ?? '');
+                $data['website_url'] = trim($_POST['website_url'] ?? '');
+
+                // avatar
+                if (!empty($_FILES['avatar']['name'])) {
+                    if ($user['avatar']) {
+                        delete_image($user['avatar'], 'avatars');
+                    }
+                    $data['avatar'] = upload_image($_FILES['avatar'], 'avatars');
+                }
+
+                if (empty($data['name'])) {
+                    $errors[] = 'Nome é obrigatório.';
+                }
+
+                if (empty($errors)) {
+                    User::update($user['id'], $data);
+                    flash('success', 'Perfil atualizado com sucesso!');
+                    redirect('profile.php?id=' . $user['id']);
+                }
+            }
+        }
+
+        require __DIR__ . '/../views/profile/edit.php';
     }
 }

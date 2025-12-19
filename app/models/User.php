@@ -75,4 +75,32 @@ class User
             $stmt->execute([$theme, $id]);
         }
     }
+    public static function update(int $id, array $data): bool
+{
+    $pdo = getPDO();
+
+    $stmt = $pdo->prepare("
+        UPDATE users SET
+            name = ?,
+            bio = ?,
+            location = ?,
+            avatar = ?,
+            github_url = ?,
+            linkedin_url = ?,
+            website_url = ?
+        WHERE id = ?
+    ");
+
+    return $stmt->execute([
+        $data['name'],
+        $data['bio'],
+        $data['location'],
+        $data['avatar'] ?? null,
+        $data['github_url'],
+        $data['linkedin_url'],
+        $data['website_url'],
+        $id
+    ]);
+}
+
 }
