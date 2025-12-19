@@ -5,4 +5,4 @@ require_once BASE_PATH . '/config/bootstrap.php';
 
 require_login();
 
-require_once BASE_PATH . '/views/feed.php';
+require_once BASE_PATH . '/views/feed/index.php';
