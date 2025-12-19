@@ -89,13 +89,13 @@ class PostController
     {
         require_login();
 
-        $id   = (int)($_GET['id'] ?? 0);
-        $post = Post::findWithUser($id);
+$id = (int)($_GET['id'] ?? 0);
 
-        if (!$post) {
-            flash('error', 'Post não encontrado.');
-            redirect('index.php?r=feed');
-        }
+if ($id <= 0) {
+    flash('error', 'Post inválido.');
+    redirect('index.php?r=feed');
+}
+
 
         $user           = current_user();
         $comments       = Comment::forPost($id);

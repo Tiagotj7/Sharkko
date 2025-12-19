@@ -38,7 +38,12 @@
       </header>
 
       <div class="post-body">
-        <h3><a href="post_show.php?id=<?= (int)$post['id'] ?>"><?= esc($post['title']) ?></a></h3>
+<h3>
+  <a href="index.php?r=post_show&id=<?= (int)$post['id'] ?>">
+    <?= esc($post['title']) ?>
+  </a>
+</h3>
+
         <p><?= nl2br(esc(substr($post['description'], 0, 220))) ?>...</p>
 
         <?php if (!empty($post['image'])): ?>

@@ -8,32 +8,32 @@ if (!isset($posts) || !is_array($posts)) {
 
 
 define('BASE_PATH', __DIR__ . '/app');
+require BASE_PATH . '/config/bootstrap.php';
 
-require_once BASE_PATH . '/config/bootstrap.php';
-
-require_once BASE_PATH . '/controllers/AuthController.php';
-require_once BASE_PATH . '/controllers/FeedController.php';
-
-$route = $_GET['r'] ?? 'login';
+$route = $_GET['r'] ?? 'feed';
 
 switch ($route) {
-case 'feed':
-    FeedController::index();
-    break;
-
-    case 'login':
-        AuthController::login();
+    case 'feed':
+        PostController::index();
         break;
 
-    case 'register':
-        AuthController::register();
+    case 'post_show':
+        PostController::show();
         break;
 
-    case 'logout':
-        AuthController::logout();
+    case 'post_create':
+        PostController::create();
+        break;
+
+    case 'post_like':
+        PostController::like();
+        break;
+
+    case 'post_comment':
+        PostController::comment();
         break;
 
     default:
         http_response_code(404);
-        echo '404';
+        echo 'Página não encontrada';
 }
