@@ -1,108 +1,107 @@
 <?php
+// app/controllers/AuthController.php
+var_dump(defined('BASE_PATH'));
+die();
 
-define('BASE_PATH', __DIR__ . '/app');
+require_once BASE_PATH . '/config/config.php';
 
-require_once __DIR__ . '/app/config/bootstrap.php';
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/validation.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../models/User.php';
+class AuthController
+{
+    public static function login()
+    {
+        $user = current_user();
+        if ($user) {
+            redirect('feed.php');
+        }
 
-require_once __DIR__ . '/app/controllers/PostController.php';
+        $errors = [];
+        $email = '';
 
-PostController::index();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+                $errors[] = 'Token CSRF inválido.';
+            } else {
+                $email = trim($_POST['email'] ?? '');
+                $password = $_POST['password'] ?? '';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+                if (($error = validate_required('E-mail', $email))) $errors[] = $error;
+                if (($error = validate_email($email))) $errors[] = $error;
+                if (($error = validate_required('Senha', $password))) $errors[] = $error;
 
+                if (empty($errors)) {
+                    $user = User::findByEmail($email);
+                    if ($user && password_verify($password, $user['password_hash'])) {
+                        login_user($user['id']);
+                        redirect('feed.php');
+                    } else {
+                        $errors[] = 'E-mail ou senha incorretos.';
+                    }
+                }
+            }
+        }
 
-require_once __DIR__ . '/app/models/Post.php';
-require_once __DIR__ . '/app/models/Like.php';
+        // Exibe o formulário
+        require_once __DIR__ . '/../views/auth/login.php';
+    }
 
-$user = current_user();
-$posts = Post::allWithUser();
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <?php include __DIR__ . '/app/views/partials/head.php'; ?>
-</head>
-<body>
-<?php include __DIR__ . '/app/views/partials/header.php'; ?>
+    public static function register()
+    {
+        $user = current_user();
+        if ($user) {
+            redirect('feed.php');
+        }
 
-<main class="container main">
-  <?php include __DIR__ . '/app/views/partials/flash.php'; ?>
+        $errors = [];
+        $data = [];
 
-  <?php if (!$user): ?>
-    <section class="hero">
-      <div>
-        <h1>Conecte devs, empresas e projetos.</h1>
-        <p>Divulgue projetos, encontre talentos e oportunidades, em um só lugar.</p>
-        <a class="btn-primary" href="register.php">Começar agora</a>
-        <a class="btn-outline" href="login.php">Já tenho conta</a>
-      </div>
-    </section>
-  <?php endif; ?>
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+                $errors[] = 'Token CSRF inválido.';
+            } else {
+                $data = [
+                    'name' => trim($_POST['name'] ?? ''),
+                    'email' => trim($_POST['email'] ?? ''),
+                    'password' => $_POST['password'] ?? '',
+                    'password_confirm' => $_POST['password_confirm'] ?? '',
+                ];
 
-  <section class="feed">
-    <h2>Projetos recentes</h2>
+                if (($error = validate_required('Nome', $data['name']))) $errors[] = $error;
+                if (($error = validate_min_length('Nome', $data['name'], 2))) $errors[] = $error;
+                if (($error = validate_max_length('Nome', $data['name'], 100))) $errors[] = $error;
+                if (($error = validate_required('E-mail', $data['email']))) $errors[] = $error;
+                if (($error = validate_email($data['email']))) $errors[] = $error;
+                if (($error = validate_required('Senha', $data['password']))) $errors[] = $error;
+                if (($error = validate_min_length('Senha', $data['password'], 6))) $errors[] = $error;
+                if ($data['password'] !== $data['password_confirm']) $errors[] = 'As senhas não coincidem.';
 
-    <?php foreach ($posts as $post): ?>
-      <?php
-        $likesCount = Like::countForPost((int)$post['id']);
-        $userLiked = $user ? Like::userLiked((int)$post['id'], (int)$user['id']) : false;
-      ?>
-      <article class="post-card">
-        <header class="post-header">
-          <div class="post-author">
-            <div class="avatar-sm">
-              <?php if (!empty($post['user_avatar'])): ?>
-                <img src="uploads/avatars/<?= esc($post['user_avatar']) ?>" alt="">
-              <?php else: ?>
-                <div class="avatar-placeholder"><?= strtoupper($post['user_name'][0]) ?></div>
-              <?php endif; ?>
-            </div>
-            <div>
-              <strong><?= esc($post['user_name']) ?></strong><br>
-              <span class="post-date"><?= esc($post['created_at']) ?></span>
-            </div>
-          </div>
-        </header>
+                if (empty($errors)) {
+                    $userId = User::create($data['name'], $data['email'], $data['password']);
+                    if ($userId) {
+                        login_user($userId);
+                        flash('success', 'Conta criada com sucesso!');
+                        redirect('feed.php');
+                    } else {
+                        $errors[] = 'E-mail já cadastrado.';
+                    }
+                }
+            }
+        }
 
-        <div class="post-body">
-          <h3><a href="post_show.php?id=<?= (int)$post['id'] ?>"><?= esc($post['title']) ?></a></h3>
-          <p><?= nl2br(esc(substr($post['description'], 0, 200))) ?>...</p>
+        remember_old($data);
 
-          <?php if (!empty($post['languages'])): ?>
-            <div class="chips">
-              <?php foreach (explode(',', $post['languages']) as $lang): ?>
-                <span class="chip chip-lang"><?= esc(trim($lang)) ?></span>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
+        // Exibe o formulário
+        require_once __DIR__ . '/../views/auth/register.php';
+    }
 
-          <?php if (!empty($post['tags'])): ?>
-            <div class="chips">
-              <?php foreach (explode(',', $post['tags']) as $tag): ?>
-                <span class="chip chip-tag">#<?= esc(trim($tag)) ?></span>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-        </div>
-
-        <footer class="post-footer">
-          <form action="post_like.php" method="post" class="inline-form">
-            <input type="hidden" name="post_id" value="<?= (int)$post['id'] ?>">
-            <button class="btn-link" <?= $user ? '' : 'disabled' ?>>
-              <?= $userLiked ? 'Descurtir' : 'Curtir' ?> (<?= $likesCount ?>)
-            </button>
-          </form>
-          <a href="post_show.php?id=<?= (int)$post['id'] ?>" class="btn-link">Comentários</a>
-        </footer>
-      </article>
-    <?php endforeach; ?>
-  </section>
-</main>
-
-<?php include __DIR__ . '/app/views/partials/footer.php'; ?>
-<script src="assets/js/theme-toggle.js"></script>
-</body>
-</html>
-
+    public static function logout()
+    {
+        logout_user();
+        flash('success', 'Logout realizado.');
+        redirect('index.php');
+    }
+}

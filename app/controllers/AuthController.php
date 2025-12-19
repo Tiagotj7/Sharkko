@@ -1,15 +1,7 @@
 <?php
-// ../controllers/AuthController.php
-var_dump(defined('BASE_PATH'));
-die();
+// app/controllers/AuthController.php
 
-require_once BASE_PATH . '/config/config.php';
-
-require_once __DIR__ . '/../helpers/auth.php';
-require_once __DIR__ . '/../helpers/validation.php';
-require_once __DIR__ . '/../helpers/csrf.php';
-require_once __DIR__ . '/../helpers/utils.php';
-require_once __DIR__ . '/../models/User.php';
+require_once BASE_PATH . '/models/User.php';
 class AuthController
 {
     public static function login()
@@ -46,8 +38,7 @@ class AuthController
         }
 
         // Exibe o formulário
-        require_once __DIR__ . '/../views/auth/login.php';
-    }
+require_once BASE_PATH . '/views/auth/login.php';    }
 
     public static function register()
     {
