@@ -17,9 +17,9 @@ require_once BASE_PATH . '/controllers/FeedController.php';
 $route = $_GET['r'] ?? 'login';
 
 switch ($route) {
-    case 'feed':
-        FeedController::index();
-        break;
+case 'feed':
+    FeedController::index();
+    break;
 
     case 'login':
         AuthController::login();
