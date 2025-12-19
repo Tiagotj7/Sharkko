@@ -3,8 +3,7 @@
 var_dump(defined('BASE_PATH'));
 die();
 
-require_once BASE_PATH . '/../views/auth/login.php';
-
+require_once BASE_PATH . '/config/config.php';
 
 require_once __DIR__ . '/../helpers/auth.php';
 require_once __DIR__ . '/../helpers/validation.php';
