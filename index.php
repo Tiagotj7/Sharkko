@@ -1,18 +1,35 @@
 <?php
+// ===============================
+// DEBUG
+// ===============================
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// proteção mínima para não quebrar a view
-if (!isset($posts) || !is_array($posts)) {
-    $posts = [];
-}
-
-
-
+// ===============================
+// BASE PATH
+// ===============================
 define('BASE_PATH', __DIR__ . '/app');
+
+// ===============================
+// BOOTSTRAP
+// ===============================
 require BASE_PATH . '/config/bootstrap.php';
 
+// ===============================
+// CONTROLLERS
+// ===============================
+require BASE_PATH . '/controllers/PostController.php';
+require BASE_PATH . '/controllers/AuthController.php';
+require BASE_PATH . '/controllers/FavoriteController.php';
+
+// ===============================
+// ROUTER
+// ===============================
 $route = $_GET['r'] ?? 'feed';
 
 switch ($route) {
+
     case 'feed':
         PostController::index();
         break;
@@ -23,6 +40,14 @@ switch ($route) {
 
     case 'post_create':
         PostController::create();
+        break;
+
+    case 'post_edit':
+        PostController::edit();
+        break;
+
+    case 'post_delete':
+        PostController::delete();
         break;
 
     case 'post_like':
