@@ -1,76 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <?php include BASE_PATH . '/views/partials/head.php'; ?>
+  <?php include __DIR__ . '/../partials/head.php'; ?>
 </head>
 <body>
+<?php include __DIR__ . '/../partials/header.php'; ?>
 
-<?php include BASE_PATH . '/views/partials/header.php'; ?>
+<main class="container main">
+  <?php include __DIR__ . '/../partials/flash.php'; ?>
 
-<main class="feed-container">
-
-<?php include BASE_PATH . '/views/partials/flash.php'; ?>
-
-<!-- CRIAR POST -->
-<section class="tweet-box">
-    <form action="index.php?r=post_create" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="<?= esc(csrf_token()) ?>">
-
-        <textarea name="description"
-                  placeholder="O que você está construindo hoje?"
-                  maxlength="500"
-                  required></textarea>
-
-        <input type="file" name="image" accept="image/*">
-
-        <button type="submit" class="btn-primary">Publicar</button>
-    </form>
+<section class="new-post-card">
+  <h2>O que você está construindo hoje?</h2>
+  <a class="btn-primary" href="post_create.php">Criar novo projeto</a>
 </section>
 
-<!-- FEED -->
 <section class="feed">
+  <?php foreach ($posts as $post): ?>
+    <?php
+      $likesCount = Like::countForPost((int)$post['id']);
+      $userLiked = Like::userLiked((int)$post['id'], (int)$user['id']);
+    ?>
+    <article class="post-card">
+      <header class="post-header">
+        <div class="post-author">
+          <div class="avatar-sm">
+            <?php if (!empty($post['user_avatar'])): ?>
+              <img src="uploads/avatars/<?= esc($post['user_avatar']) ?>" alt="">
+            <?php else: ?>
+              <div class="avatar-placeholder"><?= strtoupper($post['user_name'][0]) ?></div>
+            <?php endif; ?>
+          </div>
+          <div>
+            <strong><?= esc($post['user_name']) ?></strong><br>
+            <span class="post-date"><?= esc($post['created_at']) ?></span>
+          </div>
+        </div>
+      </header>
 
-<?php foreach ($posts as $post): ?>
-<article class="tweet">
+      <div class="post-body">
+        <h3><a href="post_show.php?id=<?= (int)$post['id'] ?>"><?= esc($post['title']) ?></a></h3>
+        <p><?= nl2br(esc(substr($post['description'], 0, 220))) ?>...</p>
 
-    <div class="tweet-avatar">
-        <?php if ($post['user_avatar']): ?>
-            <img src="uploads/avatars/<?= esc($post['user_avatar']) ?>">
-        <?php else: ?>
-            <div class="avatar-placeholder">
-                <?= strtoupper($post['user_name'][0]) ?>
-            </div>
+        <?php if (!empty($post['image'])): ?>
+          <img src="uploads/posts/<?= esc($post['image']) ?>" class="post-image" alt="">
         <?php endif; ?>
-    </div>
 
-    <div class="tweet-content">
-        <header>
-            <strong><?= esc($post['user_name']) ?></strong>
-            <span class="tweet-date"><?= esc($post['created_at']) ?></span>
-        </header>
-
-        <p><?= nl2br(esc($post['description'])) ?></p>
-
-        <?php if ($post['image']): ?>
-            <img src="uploads/posts/<?= esc($post['image']) ?>" class="tweet-image">
+        <?php if (!empty($post['languages'])): ?>
+          <div class="chips">
+            <?php foreach (explode(',', $post['languages']) as $lang): ?>
+              <span class="chip chip-lang"><?= esc(trim($lang)) ?></span>
+            <?php endforeach; ?>
+          </div>
         <?php endif; ?>
 
-        <footer class="tweet-actions">
-            <a href="index.php?r=post_show&id=<?= (int)$post['id'] ?>">💬</a>
-            <form action="index.php?r=post_like" method="post" class="inline">
-                <input type="hidden" name="csrf_token" value="<?= esc(csrf_token()) ?>">
-                <input type="hidden" name="post_id" value="<?= (int)$post['id'] ?>">
-                <button>❤️ <?= Like::countForPost($post['id']) ?></button>
-            </form>
-        </footer>
-    </div>
+        <?php if (!empty($post['tags'])): ?>
+          <div class="chips">
+            <?php foreach (explode(',', $post['tags']) as $tag): ?>
+              <span class="chip chip-tag">#<?= esc(trim($tag)) ?></span>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+      </div>
 
-</article>
-<?php endforeach; ?>
-
+      <footer class="post-footer">
+        <form action="post_like.php" method="post" class="inline-form">
+          <input type="hidden" name="csrf_token" value="<?= esc(csrf_token()) ?>">
+          <input type="hidden" name="post_id" value="<?= (int)$post['id'] ?>">
+          <button class="btn-link">
+            <?= $userLiked ? 'Descurtir' : 'Curtir' ?> (<?= $likesCount ?>)
+          </button>
+        </form>
+        <a href="post_show.php?id=<?= (int)$post['id'] ?>" class="btn-link">Ver detalhes</a>
+      </footer>
+    </article>
+  <?php endforeach; ?>
 </section>
-</main>
 
-<?php include BASE_PATH . '/views/partials/footer.php'; ?>
+</main>
+<?php include __DIR__ . '/../partials/footer.php'; ?>
+<script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
