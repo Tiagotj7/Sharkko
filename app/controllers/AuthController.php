@@ -1,5 +1,7 @@
 <?php
 // ../controllers/AuthController.php
+var_dump(defined('BASE_PATH'));
+die();
 
 require_once BASE_PATH . '/../views/auth/login.php';
 
