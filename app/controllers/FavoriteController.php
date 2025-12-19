@@ -1,9 +1,9 @@
 <?php
-// app/controllers/FavoriteController.php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/models/Favorite.php';
+// ../controllers/FavoriteController.php
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../models/Favorite.php';
 
 class FavoriteController
 {
@@ -14,7 +14,7 @@ class FavoriteController
         $user = current_user();
         $favorites = Favorite::forUser($user['id']);
 
-        require_once __DIR__ . '/app/views/favorites/index.php';
+        require_once __DIR__ . '/../views/favorites/index.php';
     }
 
     public static function toggle()

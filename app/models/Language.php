@@ -1,6 +1,6 @@
 <?php
-// app/models/Language.php
-require_once __DIR__ . '/app/database/connection.php';
+// ../models/Language.php
+require_once __DIR__ . '/../database/connection.php';
 
 class Language
 {

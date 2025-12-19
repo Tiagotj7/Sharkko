@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include __DIR__ . '/app/partials/head.php'; ?>
+  <?php include __DIR__ . '/../partials/head.php'; ?>
 </head>
 <body>
-<?php include __DIR__ . '/app/partials/header.php'; ?>
+<?php include __DIR__ . '/../partials/header.php'; ?>
 
 <main class="container main">
-  <?php include __DIR__ . '/app/partials/flash.php'; ?>
+  <?php include __DIR__ . '/../partials/flash.php'; ?>
 
   <div class="chat-header">
     <a href="messages.php" class="btn-outline">← Voltar</a>
@@ -43,7 +43,7 @@
   </form>
 </main>
 
-<?php include __DIR__ . '/app/partials/footer.php'; ?>
+<?php include __DIR__ . '/../partials/footer.php'; ?>
 <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>

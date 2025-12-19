@@ -1,12 +1,12 @@
 <?php
-// app/controllers/ProfileController.php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/validation.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/helpers/upload.php';
-require_once __DIR__ . '/app/models/User.php';
-require_once __DIR__ . '/app/models/Post.php';
+// ../controllers/ProfileController.php
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/validation.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../helpers/upload.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Post.php';
 class ProfileController
 {
     public static function show()
@@ -22,7 +22,7 @@ class ProfileController
 
         $posts = Post::byUser($id);
 
-        require_once __DIR__ . '/app/views/profile/show.php';
+        require_once __DIR__ . '/../views/profile/show.php';
     }
 
     public static function edit()
@@ -77,6 +77,6 @@ class ProfileController
 
         remember_old($data);
 
-        require_once __DIR__ . '/app/views/profile/edit.php';
+        require_once __DIR__ . '/../views/profile/edit.php';
     }
 }

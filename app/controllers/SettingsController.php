@@ -1,10 +1,10 @@
 <?php
 // app/controllers/SettingsController.php
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/validation.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/models/User.php';
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/validation.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../models/User.php';
 class SettingsController
 {
     public static function index()
@@ -52,6 +52,6 @@ class SettingsController
             }
         }
 
-        require_once __DIR__ . '/app/views/settings/index.php';
+        require_once __DIR__ . '/../views/settings/index.php';
     }
 }

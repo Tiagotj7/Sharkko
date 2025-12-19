@@ -1,8 +1,8 @@
 <?php
-// app/helpers/auth.php
+// ../helpers/auth.php
 
-require_once __DIR__ . '/app/database/connection.php';
-require_once __DIR__ . '/app/models/User.php';
+require_once __DIR__ . '/../database/connection.php';
+require_once __DIR__ . '/../models/User.php';
 
 function login_user(int $userId) {
     $_SESSION['user_id'] = $userId;

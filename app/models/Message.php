@@ -1,6 +1,6 @@
 <?php
-// app/models/Message.php
-require_once __DIR__ . '/app/database/connection.php';
+// ../models/Message.php
+require_once __DIR__ . '/../database/connection.php';
 
 class Message
 {

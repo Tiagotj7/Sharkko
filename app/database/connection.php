@@ -1,6 +1,6 @@
 <?php
 // app/database/connection.php
-require_once __DIR__ . '/app/config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 function getPDO(): PDO
 {

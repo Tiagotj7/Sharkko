@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <?php include $_SERVER['DOCUMENT_ROOT'] . '/app/views/partials/head.php'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/../views/partials/head.php'; ?>
 </head>
 <body>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/app/views/partials/header.php'; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/../views/partials/header.php'; ?>
 
 <main class="container main">
-  <?php include $_SERVER['DOCUMENT_ROOT'] . '/app/views/partials/flash.php'; ?>
+  <?php include $_SERVER['DOCUMENT_ROOT'] . '/../views/partials/flash.php'; ?>
 
   <h1>Novo projeto</h1>
 
@@ -54,6 +54,6 @@
   </form>
 </main>
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/app/views/partials/footer.php'; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/../views/partials/footer.php'; ?>
 </body>
 </html>

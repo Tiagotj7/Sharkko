@@ -1,14 +1,14 @@
 <?php
-// app/controllers/AuthController.php
+// ../controllers/AuthController.php
 
-require_once BASE_PATH . '/app/views/auth/login.php';
+require_once BASE_PATH . '/../views/auth/login.php';
 
 
-require_once __DIR__ . '/app/helpers/auth.php';
-require_once __DIR__ . '/app/helpers/validation.php';
-require_once __DIR__ . '/app/helpers/csrf.php';
-require_once __DIR__ . '/app/helpers/utils.php';
-require_once __DIR__ . '/app/models/User.php';
+require_once __DIR__ . '/../helpers/auth.php';
+require_once __DIR__ . '/../helpers/validation.php';
+require_once __DIR__ . '/../helpers/csrf.php';
+require_once __DIR__ . '/../helpers/utils.php';
+require_once __DIR__ . '/../models/User.php';
 class AuthController
 {
     public static function login()
@@ -45,7 +45,7 @@ class AuthController
         }
 
         // Exibe o formulário
-        require_once __DIR__ . '/app/views/auth/login.php';
+        require_once __DIR__ . '/../views/auth/login.php';
     }
 
     public static function register()
@@ -94,7 +94,7 @@ class AuthController
         remember_old($data);
 
         // Exibe o formulário
-        require_once __DIR__ . '/app/views/auth/register.php';
+        require_once __DIR__ . '/../views/auth/register.php';
     }
 
     public static function logout()
