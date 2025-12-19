@@ -1,27 +1,29 @@
 <?php
-// ../helpers/auth.php
+// app/helpers/auth.php
 
-require_once __DIR__ . '/../database/connection.php';
-require_once __DIR__ . '/../models/User.php';
-
-function login_user(int $userId) {
+function login_user(int $userId): void
+{
     $_SESSION['user_id'] = $userId;
 }
 
-function logout_user() {
+function logout_user(): void
+{
     unset($_SESSION['user_id']);
 }
 
-function current_user() {
+function current_user()
+{
     if (!empty($_SESSION['user_id'])) {
-        return User::findById((int)$_SESSION['user_id']);
+        return User::findById((int) $_SESSION['user_id']);
     }
     return null;
 }
 
-function require_login() {
+function require_login(): void
+{
     if (!current_user()) {
         flash('error', 'Você precisa estar logado.');
-        redirect('login.php');
+        redirect('index.php?r=login');
+        exit;
     }
 }
