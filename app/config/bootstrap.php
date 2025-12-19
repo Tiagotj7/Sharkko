@@ -1,17 +1,25 @@
 <?php
 
-// sessão primeiro
+// ===============================
+// 1️⃣ SESSÃO
+// ===============================
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// database
+// ===============================
+// 2️⃣ BANCO
+// ===============================
 require_once BASE_PATH . '/database/connection.php';
 
-// models (ANTES dos helpers)
+// ===============================
+// 3️⃣ MODELS (ANTES DOS HELPERS)
+// ===============================
 require_once BASE_PATH . '/models/User.php';
 
-// helpers
+// ===============================
+// 4️⃣ HELPERS
+// ===============================
 require_once BASE_PATH . '/helpers/utils.php';
 require_once BASE_PATH . '/helpers/auth.php';
 require_once BASE_PATH . '/helpers/csrf.php';
