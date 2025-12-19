@@ -1,5 +1,12 @@
 <?php
 
+// proteção mínima para não quebrar a view
+if (!isset($posts) || !is_array($posts)) {
+    $posts = [];
+}
+
+
+
 define('BASE_PATH', __DIR__ . '/app');
 
 require_once BASE_PATH . '/config/bootstrap.php';
