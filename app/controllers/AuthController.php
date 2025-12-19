@@ -2,6 +2,7 @@
 // app/controllers/AuthController.php
 
 require_once BASE_PATH . '/models/User.php';
+
 class AuthController
 {
     public static function login()
@@ -21,12 +22,13 @@ class AuthController
                 $email = trim($_POST['email'] ?? '');
                 $password = $_POST['password'] ?? '';
 
-                if (($error = validate_required('E-mail', $email))) $errors[] = $error;
-                if (($error = validate_email($email))) $errors[] = $error;
-                if (($error = validate_required('Senha', $password))) $errors[] = $error;
+                if ($error = validate_required('E-mail', $email)) $errors[] = $error;
+                if ($error = validate_email($email)) $errors[] = $error;
+                if ($error = validate_required('Senha', $password)) $errors[] = $error;
 
                 if (empty($errors)) {
                     $user = User::findByEmail($email);
+
                     if ($user && password_verify($password, $user['password_hash'])) {
                         login_user($user['id']);
                         redirect('feed.php');
@@ -37,8 +39,8 @@ class AuthController
             }
         }
 
-        // Exibe o formulário
-require_once BASE_PATH . '/views/auth/login.php';    }
+        require BASE_PATH . '/views/auth/login.php';
+    }
 
     public static function register()
     {
@@ -61,17 +63,25 @@ require_once BASE_PATH . '/views/auth/login.php';    }
                     'password_confirm' => $_POST['password_confirm'] ?? '',
                 ];
 
-                if (($error = validate_required('Nome', $data['name']))) $errors[] = $error;
-                if (($error = validate_min_length('Nome', $data['name'], 2))) $errors[] = $error;
-                if (($error = validate_max_length('Nome', $data['name'], 100))) $errors[] = $error;
-                if (($error = validate_required('E-mail', $data['email']))) $errors[] = $error;
-                if (($error = validate_email($data['email']))) $errors[] = $error;
-                if (($error = validate_required('Senha', $data['password']))) $errors[] = $error;
-                if (($error = validate_min_length('Senha', $data['password'], 6))) $errors[] = $error;
-                if ($data['password'] !== $data['password_confirm']) $errors[] = 'As senhas não coincidem.';
+                if ($e = validate_required('Nome', $data['name'])) $errors[] = $e;
+                if ($e = validate_min_length('Nome', $data['name'], 2)) $errors[] = $e;
+                if ($e = validate_max_length('Nome', $data['name'], 100)) $errors[] = $e;
+                if ($e = validate_required('E-mail', $data['email'])) $errors[] = $e;
+                if ($e = validate_email($data['email'])) $errors[] = $e;
+                if ($e = validate_required('Senha', $data['password'])) $errors[] = $e;
+                if ($e = validate_min_length('Senha', $data['password'], 6)) $errors[] = $e;
+
+                if ($data['password'] !== $data['password_confirm']) {
+                    $errors[] = 'As senhas não coincidem.';
+                }
 
                 if (empty($errors)) {
-                    $userId = User::create($data['name'], $data['email'], $data['password']);
+                    $userId = User::create(
+                        $data['name'],
+                        $data['email'],
+                        $data['password']
+                    );
+
                     if ($userId) {
                         login_user($userId);
                         flash('success', 'Conta criada com sucesso!');
@@ -85,8 +95,7 @@ require_once BASE_PATH . '/views/auth/login.php';    }
 
         remember_old($data);
 
-        // Exibe o formulário
-        require_once __DIR__ . '/../views/auth/register.php';
+        require BASE_PATH . '/views/auth/register.php';
     }
 
     public static function logout()
