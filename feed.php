@@ -1,8 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// feed.php (entry point)
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/config/bootstrap.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/app/controllers/PostController.php';
+// 1️⃣ Define BASE_PATH
+define('BASE_PATH', __DIR__ . '/app');
 
-PostController::index();
+// 2️⃣ Carrega bootstrap
+require_once BASE_PATH . '/config/bootstrap.php';
+
+// 3️⃣ (opcional) proteção de rota
+require_login();
+
+// 4️⃣ View ou controller
+require BASE_PATH . '/views/feed.php';
