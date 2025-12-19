@@ -1,132 +1,155 @@
 <?php
-// ../controllers/PostController.php
-require_once __DIR__ . '/../helpers/auth.php';
-require_once __DIR__ . '/../helpers/validation.php';
-require_once __DIR__ . '/../helpers/csrf.php';
-require_once __DIR__ . '/../helpers/upload.php';
-require_once __DIR__ . '/../helpers/utils.php';
-require_once __DIR__ . '/../models/Post.php';
-require_once __DIR__ . '/../models/Like.php';
-require_once __DIR__ . '/../models/Comment.php';
-require_once __DIR__ . '/../models/Favorite.php';
+
+require_once BASE_PATH . '/helpers/auth.php';
+require_once BASE_PATH . '/helpers/validation.php';
+require_once BASE_PATH . '/helpers/csrf.php';
+require_once BASE_PATH . '/helpers/upload.php';
+require_once BASE_PATH . '/helpers/utils.php';
+
+require_once BASE_PATH . '/models/Post.php';
+require_once BASE_PATH . '/models/Like.php';
+require_once BASE_PATH . '/models/Comment.php';
+require_once BASE_PATH . '/models/Favorite.php';
 
 class PostController
 {
+    /* ==============================
+     * FEED
+     * ============================== */
     public static function index()
     {
         require_login();
 
-        $user = current_user();
+        $user  = current_user();
         $posts = Post::allWithUser();
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/../views/feed/index.php';
+        require BASE_PATH . '/views/feed/index.php';
     }
 
+    /* ==============================
+     * CREATE
+     * ============================== */
     public static function create()
     {
         require_login();
 
         $errors = [];
-        $data = [];
+        $data   = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             if (!verify_csrf($_POST['csrf_token'] ?? '')) {
                 $errors[] = 'Token CSRF inválido.';
             } else {
+
                 $data = [
-                    'title' => trim($_POST['title'] ?? ''),
-                    'description' => trim($_POST['description'] ?? ''),
-                    'tags' => trim($_POST['tags'] ?? ''),
-                    'languages' => trim($_POST['languages'] ?? ''),
+                    'title'         => trim($_POST['title'] ?? ''),
+                    'description'   => trim($_POST['description'] ?? ''),
+                    'tags'          => trim($_POST['tags'] ?? ''),
+                    'languages'     => trim($_POST['languages'] ?? ''),
                     'contact_email' => trim($_POST['contact_email'] ?? ''),
-                    'contact_link' => trim($_POST['contact_link'] ?? ''),
+                    'contact_link'  => trim($_POST['contact_link'] ?? ''),
                 ];
 
-                if (($error = validate_required('Título', $data['title']))) $errors[] = $error;
-                if (($error = validate_max_length('Título', $data['title'], 150))) $errors[] = $error;
-                if (($error = validate_required('Descrição', $data['description']))) $errors[] = $error;
-                if (($error = validate_url($data['contact_link']))) $errors[] = $error;
+                if ($e = validate_required('Título', $data['title'])) $errors[] = $e;
+                if ($e = validate_max_length('Título', $data['title'], 150)) $errors[] = $e;
+                if ($e = validate_required('Descrição', $data['description'])) $errors[] = $e;
+                if ($e = validate_url($data['contact_link'])) $errors[] = $e;
 
                 $image = null;
                 if (!empty($_FILES['image']['name'])) {
-                    if (($error = validate_image_upload($_FILES['image']))) {
-                        $errors[] = $error;
+                    if ($e = validate_image_upload($_FILES['image'])) {
+                        $errors[] = $e;
                     } else {
                         $image = upload_image($_FILES['image'], 'posts');
                     }
                 }
 
                 if (empty($errors)) {
-                    $user = current_user();
-                    $postId = Post::create($user['id'], array_merge($data, ['image' => $image]));
+                    $user   = current_user();
+                    $postId = Post::create(
+                        $user['id'],
+                        array_merge($data, ['image' => $image])
+                    );
+
                     flash('success', 'Post criado com sucesso!');
-                    redirect('post_show.php?id=' . $postId);
+                    redirect('index.php?r=post_show&id=' . $postId);
                 }
             }
         }
 
         remember_old($data);
-
-        require_once __DIR__ . '/../views/post/create.php';
+        require BASE_PATH . '/views/post/create.php';
     }
 
+    /* ==============================
+     * SHOW
+     * ============================== */
     public static function show()
     {
         require_login();
 
-        $id = (int)($_GET['id'] ?? 0);
+        $id   = (int)($_GET['id'] ?? 0);
         $post = Post::findWithUser($id);
+
         if (!$post) {
             flash('error', 'Post não encontrado.');
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
-        $comments = Comment::forPost($id);
-        $user = current_user();
-        $likesCount = Like::countForPost($id);
-        $userLiked = Like::userLiked($id, $user['id']);
-        $userFavorited = Favorite::userFavorited($id, $user['id']);
+        $user           = current_user();
+        $comments       = Comment::forPost($id);
+        $likesCount     = Like::countForPost($id);
+        $userLiked      = Like::userLiked($id, $user['id']);
+        $userFavorited  = Favorite::userFavorited($id, $user['id']);
 
-        require_once __DIR__ . '/../views/post/show.php';
+        require BASE_PATH . '/views/post/show.php';
     }
 
+    /* ==============================
+     * EDIT / UPDATE
+     * ============================== */
     public static function edit()
     {
         require_login();
 
-        $id = (int)($_GET['id'] ?? 0);
+        $id   = (int)($_GET['id'] ?? 0);
         $user = current_user();
         $post = Post::findById($id);
+
         if (!$post || $post['user_id'] != $user['id']) {
             flash('error', 'Post não encontrado ou sem permissão.');
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
         $errors = [];
-        $data = $post;
+        $data   = $post;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             if (!verify_csrf($_POST['csrf_token'] ?? '')) {
                 $errors[] = 'Token CSRF inválido.';
             } else {
+
                 $data = array_merge($data, [
-                    'title' => trim($_POST['title'] ?? ''),
-                    'description' => trim($_POST['description'] ?? ''),
-                    'tags' => trim($_POST['tags'] ?? ''),
-                    'languages' => trim($_POST['languages'] ?? ''),
+                    'title'         => trim($_POST['title'] ?? ''),
+                    'description'   => trim($_POST['description'] ?? ''),
+                    'tags'          => trim($_POST['tags'] ?? ''),
+                    'languages'     => trim($_POST['languages'] ?? ''),
                     'contact_email' => trim($_POST['contact_email'] ?? ''),
-                    'contact_link' => trim($_POST['contact_link'] ?? ''),
+                    'contact_link'  => trim($_POST['contact_link'] ?? ''),
                 ]);
 
-                if (($error = validate_required('Título', $data['title']))) $errors[] = $error;
-                if (($error = validate_max_length('Título', $data['title'], 150))) $errors[] = $error;
-                if (($error = validate_required('Descrição', $data['description']))) $errors[] = $error;
-                if (($error = validate_url($data['contact_link']))) $errors[] = $error;
+                if ($e = validate_required('Título', $data['title'])) $errors[] = $e;
+                if ($e = validate_max_length('Título', $data['title'], 150)) $errors[] = $e;
+                if ($e = validate_required('Descrição', $data['description'])) $errors[] = $e;
+                if ($e = validate_url($data['contact_link'])) $errors[] = $e;
 
                 $image = $post['image'];
+
                 if (!empty($_FILES['image']['name'])) {
-                    if (($error = validate_image_upload($_FILES['image']))) {
-                        $errors[] = $error;
+                    if ($e = validate_image_upload($_FILES['image'])) {
+                        $errors[] = $e;
                     } else {
                         if ($image) delete_image($image, 'posts');
                         $image = upload_image($_FILES['image'], 'posts');
@@ -135,103 +158,96 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/../views/feed/index.php';
 
                 if (empty($errors)) {
                     $data['image'] = $image;
-                    if (Post::update($id, $user['id'], $data)) {
-                        flash('success', 'Post atualizado com sucesso!');
-                        redirect('post_show.php?id=' . $id);
-                    } else {
-                        $errors[] = 'Erro ao atualizar post.';
-                    }
+
+                    Post::update($id, $user['id'], $data);
+                    flash('success', 'Post atualizado com sucesso!');
+                    redirect('index.php?r=post_show&id=' . $id);
                 }
             }
         }
 
         remember_old($data);
-
-        require_once __DIR__ . '/../views/post/edit.php';
+        require BASE_PATH . '/views/post/edit.php';
     }
 
-    public static function update()
-    {
-        // Alias for edit POST
-        self::edit();
-    }
-
+    /* ==============================
+     * DELETE
+     * ============================== */
     public static function delete()
     {
         require_login();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
         if (!verify_csrf($_POST['csrf_token'] ?? '')) {
             flash('error', 'Token CSRF inválido.');
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
-        $id = (int)($_POST['id'] ?? 0);
+        $id   = (int)($_POST['id'] ?? 0);
         $user = current_user();
         $post = Post::findById($id);
+
         if (!$post || $post['user_id'] != $user['id']) {
-            flash('error', 'Post não encontrado ou sem permissão.');
-            redirect('feed.php');
+            flash('error', 'Sem permissão.');
+            redirect('index.php?r=feed');
         }
 
-        if (Post::delete($id, $user['id'])) {
-            if ($post['image']) delete_image($post['image'], 'posts');
-            flash('success', 'Post deletado com sucesso!');
-        } else {
-            flash('error', 'Erro ao deletar post.');
+        Post::delete($id, $user['id']);
+
+        if ($post['image']) {
+            delete_image($post['image'], 'posts');
         }
 
-        redirect('feed.php');
+        flash('success', 'Post removido.');
+        redirect('index.php?r=feed');
     }
 
+    /* ==============================
+     * LIKE
+     * ============================== */
     public static function like()
     {
         require_login();
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('feed.php');
-        }
-
         if (!verify_csrf($_POST['csrf_token'] ?? '')) {
             flash('error', 'Token CSRF inválido.');
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
         $postId = (int)($_POST['post_id'] ?? 0);
-        $user = current_user();
+        $user   = current_user();
 
         Like::toggle($postId, $user['id']);
 
-        redirect($_SERVER['HTTP_REFERER'] ?? 'feed.php');
+        redirect($_SERVER['HTTP_REFERER'] ?? 'index.php?r=feed');
     }
 
+    /* ==============================
+     * COMMENT
+     * ============================== */
     public static function comment()
     {
         require_login();
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('feed.php');
-        }
-
         if (!verify_csrf($_POST['csrf_token'] ?? '')) {
             flash('error', 'Token CSRF inválido.');
-            redirect('feed.php');
+            redirect('index.php?r=feed');
         }
 
         $postId = (int)($_POST['post_id'] ?? 0);
-        $body = trim($_POST['body'] ?? '');
+        $body   = trim($_POST['body'] ?? '');
 
-        if (($error = validate_required('Comentário', $body))) {
-            flash('error', $error);
-            redirect('post_show.php?id=' . $postId);
+        if ($e = validate_required('Comentário', $body)) {
+            flash('error', $e);
+            redirect('index.php?r=post_show&id=' . $postId);
         }
 
         $user = current_user();
         Comment::create($postId, $user['id'], $body);
 
-        redirect('post_show.php?id=' . $postId);
+        redirect('index.php?r=post_show&id=' . $postId);
     }
 }
