@@ -1,3 +1,6 @@
+<?php
+// /app/views/feed/index.php?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

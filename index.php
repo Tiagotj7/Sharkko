@@ -34,11 +34,22 @@ switch ($route) {
         PostController::index();
         break;
 
-case 'post_show':
-    require_once BASE_PATH . '/controllers/PostController.php';
-    PostController::show();
-    break;
+    case 'post_show':
+        require_once BASE_PATH . '/controllers/PostController.php';
+        PostController::show();
+        break;
 
+    case 'login':
+        AuthController::login();
+        break;
+
+    case 'register':
+        AuthController::register();
+        break;
+
+    case 'logout':
+        AuthController::logout();
+        break;
 
     case 'post_create':
         PostController::create();
