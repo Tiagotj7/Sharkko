@@ -27,13 +27,13 @@ function flash(string $key, ?string $message = null) {
     }
 }
 
-function old(string $key, string $default = ''): string {
+function old(string $key, ?string $default = null): string {
     if (!empty($_SESSION['old'][$key])) {
         $value = $_SESSION['old'][$key];
         unset($_SESSION['old'][$key]);
-        return $value;
+        return (string)$value;
     }
-    return $default;
+    return $default ?? '';
 }
 
 function remember_old(array $data) {
