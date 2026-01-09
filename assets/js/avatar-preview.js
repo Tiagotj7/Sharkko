@@ -49,23 +49,26 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updateTransform() {
-    previewImg.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
+    // Use scale first, then translate for proper centering
+    // With transformOrigin at 0,0: scale(s) translate(x, y)
+    previewImg.style.transformOrigin = '0 0';
+    const scaledWidth = imgWidth * scale;
+    const scaledHeight = imgHeight * scale;
+    const tx = (PREVIEW_SIZE - scaledWidth) / 2 + imgX;
+    const ty = (PREVIEW_SIZE - scaledHeight) / 2 + imgY;
+    previewImg.style.transform = `scale(${scale}) translate(${tx}px, ${ty}px)`;
+    
     cropScale.value = Number(scale.toFixed(2));
     cropX.value = Number(imgX.toFixed(0));
     cropY.value = Number(imgY.toFixed(0));
   }
 
   function constrainPosition() {
-    // Center the image first (this is what we want by default)
-    const centerX = (PREVIEW_SIZE - imgWidth * scale) / 2;
-    const centerY = (PREVIEW_SIZE - imgHeight * scale) / 2;
-    
-    // Allow dragging but keep image mostly visible (small padding)
-    const maxOffsetX = Math.abs(centerX) + 30;
-    const maxOffsetY = Math.abs(centerY) + 30;
-    
-    imgX = Math.max(-maxOffsetX, Math.min(maxOffsetX, imgX));
-    imgY = Math.max(-maxOffsetY, Math.min(maxOffsetY, imgY));
+    // Allow dragging but limit how far off-center it can go
+    // imgX and imgY are offsets from the center
+    const maxDrag = 40; // pixels
+    imgX = Math.max(-maxDrag, Math.min(maxDrag, imgX));
+    imgY = Math.max(-maxDrag, Math.min(maxDrag, imgY));
   }
 
   if (zoom) {
@@ -127,8 +130,9 @@ document.addEventListener('DOMContentLoaded', function () {
         zoom.value = minScale.toFixed(2);
         if (zoomValue) zoomValue.textContent = Math.round(scale * 100) + '%';
 
-        imgX = (PREVIEW_SIZE - imgWidth * scale) / 2;
-        imgY = (PREVIEW_SIZE - imgHeight * scale) / 2;
+        // Start centered (imgX and imgY should be 0 when centered)
+        imgX = 0;
+        imgY = 0;
 
         if (validationMsg) validationMsg.style.display = 'none';
         previewWrap.style.display = 'block';
