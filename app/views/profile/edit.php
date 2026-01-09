@@ -51,7 +51,7 @@
           <img id="avatarPreviewImg" src="" alt="Preview" style="position:absolute;top:0;left:0;transform-origin:top left;">
         </div>
         <div style="margin-top:8px;">
-          <label>Zoom <input id="avatarZoom" type="range" min="1" max="3" step="0.01" value="1"></label>
+          <label>Zoom <input id="avatarZoom" type="range" min="1" max="3" step="0.1" value="1" style="width:100%;"></label>
         </div>
         <p style="font-size:12px;color:#666;margin-top:6px;">Arraste a imagem para reposicionar. Use o zoom para ajustar o corte.</p>
 

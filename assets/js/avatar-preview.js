@@ -16,53 +16,53 @@ document.addEventListener('DOMContentLoaded', function () {
   let imgX = 0;
   let imgY = 0;
   let scale = 1;
+  let minScale = 1;
 
   function updateTransform() {
     previewImg.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
-    cropScale.value = scale;
-    // store normalized offsets relative to preview size
-    const rect = preview.getBoundingClientRect();
-    cropX.value = Math.round((imgX / rect.width) * 100);
-    cropY.value = Math.round((imgY / rect.height) * 100);
+    cropScale.value = Number(scale.toFixed(2));
+    cropX.value = Number(imgX.toFixed(0));
+    cropY.value = Number(imgY.toFixed(0));
   }
 
   zoom.addEventListener('input', function () {
-    scale = parseFloat(this.value);
-    // adjust position to keep image centered-ish
+    const newScale = Math.max(minScale, Math.min(3, parseFloat(this.value)));
+    scale = newScale;
+    this.value = newScale;
     updateTransform();
   });
 
   input.addEventListener('change', function (e) {
     const file = this.files && this.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor, selecione uma imagem válida.');
+      return;
+    }
 
     const url = URL.createObjectURL(file);
     previewImg.src = url;
 
-    // reset state
-    scale = 1;
-    imgX = 0;
-    imgY = 0;
-    zoom.value = '1';
-    updateTransform();
-
     // wait for image to load to fit it
     previewImg.onload = function () {
-      // fit image so it covers the preview area
       const rect = preview.getBoundingClientRect();
       const imgW = previewImg.naturalWidth;
       const imgH = previewImg.naturalHeight;
+      
+      // Calculate base scale (fit image to circle)
       const scaleX = rect.width / imgW;
       const scaleY = rect.height / imgH;
-      // choose larger to cover area
-      const baseScale = Math.max(scaleX, scaleY);
-      scale = baseScale;
-      zoom.min = baseScale;
-      zoom.value = baseScale;
-      cropScale.value = scale;
-
-      // center image
+      minScale = Math.max(scaleX, scaleY);
+      
+      // Set zoom limits and initial value
+      zoom.min = minScale.toFixed(2);
+      zoom.max = '3';
+      zoom.step = '0.1';
+      
+      scale = minScale;
+      zoom.value = minScale.toFixed(2);
+      
+      // Center image initially
       imgX = (rect.width - imgW * scale) / 2;
       imgY = (rect.height - imgH * scale) / 2;
       updateTransform();
@@ -71,13 +71,14 @@ document.addEventListener('DOMContentLoaded', function () {
     previewWrap.style.display = 'block';
   });
 
-  // dragging
+  // dragging - only when zoomed in
   preview.addEventListener('pointerdown', function (e) {
-    e.preventDefault();
+    if (scale <= minScale + 0.01) return; // no drag at base scale
     dragging = true;
     startX = e.clientX;
     startY = e.clientY;
-    preview.setPointerCapture(e.pointerId);
+    preview.style.cursor = 'grabbing';
+    try { preview.setPointerCapture(e.pointerId); } catch (err) {}
   });
 
   preview.addEventListener('pointermove', function (e) {
@@ -93,11 +94,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   preview.addEventListener('pointerup', function (e) {
     dragging = false;
+    preview.style.cursor = 'grab';
     try { preview.releasePointerCapture(e.pointerId); } catch (err) {}
   });
 
   preview.addEventListener('pointercancel', function () {
     dragging = false;
+    preview.style.cursor = 'grab';
   });
 
 });
