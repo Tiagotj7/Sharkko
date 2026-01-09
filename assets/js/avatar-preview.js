@@ -2,13 +2,25 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   const input = document.getElementById('avatarInput');
+  const container = document.querySelector('.avatar-container');
   const previewWrap = document.getElementById('avatarPreviewWrap');
   const previewImg = document.getElementById('avatarPreviewImg');
   const preview = document.getElementById('avatarPreview');
   const zoom = document.getElementById('avatarZoom');
+  const zoomValue = document.getElementById('zoomValue');
+  const validationMsg = document.getElementById('avatarValidationMsg');
+  const confirmBtn = document.getElementById('avatarConfirmBtn');
+  const cancelBtn = document.getElementById('avatarCancelBtn');
   const cropScale = document.getElementById('avatarCropScale');
   const cropX = document.getElementById('avatarCropX');
   const cropY = document.getElementById('avatarCropY');
+
+  const MIN_WIDTH = 400;
+  const MAX_WIDTH = 4000;
+  const MIN_HEIGHT = 400;
+  const MAX_HEIGHT = 4000;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const PREVIEW_SIZE = 240;
 
   let dragging = false;
   let startX = 0;
@@ -17,6 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
   let imgY = 0;
   let scale = 1;
   let minScale = 1;
+  let imgWidth = 0;
+  let imgHeight = 0;
+
+  // Open file input when container clicked
+  if (container) {
+    container.addEventListener('click', () => input.click());
+  }
+
+  function showValidation(message, isError = true) {
+    if (validationMsg) {
+      validationMsg.textContent = message;
+      validationMsg.className = 'avatar-validation-msg ' + (isError ? 'error' : 'success');
+      validationMsg.style.display = 'block';
+      if (!isError) {
+        setTimeout(() => validationMsg.style.display = 'none', 3000);
+      }
+    }
+  }
 
   function updateTransform() {
     previewImg.style.transform = `translate(${imgX}px, ${imgY}px) scale(${scale})`;
@@ -25,82 +55,138 @@ document.addEventListener('DOMContentLoaded', function () {
     cropY.value = Number(imgY.toFixed(0));
   }
 
-  zoom.addEventListener('input', function () {
-    const newScale = Math.max(minScale, Math.min(3, parseFloat(this.value)));
-    scale = newScale;
-    this.value = newScale;
-    updateTransform();
-  });
+  function constrainPosition() {
+    const maxX = (PREVIEW_SIZE - imgWidth * scale) / 2;
+    const maxY = (PREVIEW_SIZE - imgHeight * scale) / 2;
+    const minX = (PREVIEW_SIZE - imgWidth * scale) / 2;
+    const minY = (PREVIEW_SIZE - imgHeight * scale) / 2;
+    const padding = 20;
+    imgX = Math.max(minX - padding, Math.min(maxX + padding, imgX));
+    imgY = Math.max(minY - padding, Math.min(maxY + padding, imgY));
+  }
 
-  input.addEventListener('change', function (e) {
-    const file = this.files && this.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      alert('Por favor, selecione uma imagem válida.');
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    previewImg.src = url;
-
-    // wait for image to load to fit it
-    previewImg.onload = function () {
-      const rect = preview.getBoundingClientRect();
-      const imgW = previewImg.naturalWidth;
-      const imgH = previewImg.naturalHeight;
-      
-      // Calculate base scale (fit image to circle)
-      const scaleX = rect.width / imgW;
-      const scaleY = rect.height / imgH;
-      minScale = Math.max(scaleX, scaleY);
-      
-      // Set zoom limits and initial value
-      zoom.min = minScale.toFixed(2);
-      zoom.max = '3';
-      zoom.step = '0.1';
-      
-      scale = minScale;
-      zoom.value = minScale.toFixed(2);
-      
-      // Center image initially
-      imgX = (rect.width - imgW * scale) / 2;
-      imgY = (rect.height - imgH * scale) / 2;
+  if (zoom) {
+    zoom.addEventListener('input', function () {
+      scale = parseFloat(this.value);
+      if (zoomValue) zoomValue.textContent = Math.round(scale * 100) + '%';
+      constrainPosition();
       updateTransform();
-    };
+    });
+  }
 
-    previewWrap.style.display = 'block';
-  });
+  if (input) {
+    input.addEventListener('change', function (e) {
+      const file = this.files && this.files[0];
+      if (!file) return;
 
-  // dragging - only when zoomed in
-  preview.addEventListener('pointerdown', function (e) {
-    if (scale <= minScale + 0.01) return; // no drag at base scale
-    dragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    preview.style.cursor = 'grabbing';
-    try { preview.setPointerCapture(e.pointerId); } catch (err) {}
-  });
+      if (file.size > MAX_FILE_SIZE) {
+        showValidation('Arquivo muito grande. Máximo de 5MB.');
+        input.value = '';
+        return;
+      }
 
-  preview.addEventListener('pointermove', function (e) {
-    if (!dragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    startX = e.clientX;
-    startY = e.clientY;
-    imgX += dx;
-    imgY += dy;
-    updateTransform();
-  });
+      if (!file.type.startsWith('image/')) {
+        showValidation('Tipo inválido. Use JPG, PNG ou GIF.');
+        input.value = '';
+        return;
+      }
 
-  preview.addEventListener('pointerup', function (e) {
-    dragging = false;
-    preview.style.cursor = 'grab';
-    try { preview.releasePointerCapture(e.pointerId); } catch (err) {}
-  });
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
 
-  preview.addEventListener('pointercancel', function () {
-    dragging = false;
-    preview.style.cursor = 'grab';
-  });
+      previewImg.onload = function () {
+        imgWidth = previewImg.naturalWidth;
+        imgHeight = previewImg.naturalHeight;
+
+        if (imgWidth < MIN_WIDTH || imgHeight < MIN_HEIGHT) {
+          showValidation(`Imagem muito pequena. Mínimo ${MIN_WIDTH}x${MIN_HEIGHT}px.`);
+          previewWrap.style.display = 'none';
+          input.value = '';
+          return;
+        }
+
+        if (imgWidth > MAX_WIDTH || imgHeight > MAX_HEIGHT) {
+          showValidation(`Imagem muito grande. Máximo ${MAX_WIDTH}x${MAX_HEIGHT}px.`);
+          previewWrap.style.display = 'none';
+          input.value = '';
+          return;
+        }
+
+        const scaleX = PREVIEW_SIZE / imgWidth;
+        const scaleY = PREVIEW_SIZE / imgHeight;
+        minScale = Math.max(scaleX, scaleY);
+
+        zoom.min = minScale.toFixed(2);
+        zoom.max = '3';
+        zoom.step = '0.1';
+
+        scale = minScale;
+        zoom.value = minScale.toFixed(2);
+        if (zoomValue) zoomValue.textContent = Math.round(scale * 100) + '%';
+
+        imgX = (PREVIEW_SIZE - imgWidth * scale) / 2;
+        imgY = (PREVIEW_SIZE - imgHeight * scale) / 2;
+
+        if (validationMsg) validationMsg.style.display = 'none';
+        previewWrap.style.display = 'block';
+        updateTransform();
+      };
+
+      previewImg.onerror = function () {
+        showValidation('Não foi possível carregar a imagem.');
+        input.value = '';
+        previewWrap.style.display = 'none';
+      };
+    });
+  }
+
+  if (preview) {
+    preview.addEventListener('pointerdown', function (e) {
+      if (scale <= minScale + 0.01) return;
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      preview.style.cursor = 'grabbing';
+      try { preview.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    preview.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      startX = e.clientX;
+      startY = e.clientY;
+      imgX += dx;
+      imgY += dy;
+      constrainPosition();
+      updateTransform();
+    });
+
+    preview.addEventListener('pointerup', function (e) {
+      dragging = false;
+      preview.style.cursor = 'grab';
+      try { preview.releasePointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    preview.addEventListener('pointercancel', function () {
+      dragging = false;
+      preview.style.cursor = 'grab';
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function () {
+      input.value = '';
+      previewWrap.style.display = 'none';
+      if (validationMsg) validationMsg.style.display = 'none';
+    });
+  }
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', function () {
+      previewWrap.style.display = 'none';
+      showValidation('Foto pronta para salvar!', false);
+    });
+  }
 
 });
