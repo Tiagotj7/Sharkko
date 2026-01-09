@@ -43,7 +43,7 @@
       Avatar (opcional)
       <input id="avatarInput" type="file" name="avatar" accept="image/*">
       <?php if (!empty($data['avatar'])): ?>
-        <p>Avatar atual: <img src="uploads/avatars/<?= esc($data['avatar']) ?>" width="80" alt="Avatar"></p>
+        <p>Avatar atual: <img src="<?= BASE_URL ?>/uploads/avatars/<?= esc($data['avatar']) ?>" width="80" alt="Avatar"></p>
       <?php endif; ?>
 
       <!-- Preview and crop interface -->

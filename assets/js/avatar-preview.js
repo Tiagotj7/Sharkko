@@ -56,13 +56,16 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function constrainPosition() {
-    const maxX = (PREVIEW_SIZE - imgWidth * scale) / 2;
-    const maxY = (PREVIEW_SIZE - imgHeight * scale) / 2;
-    const minX = (PREVIEW_SIZE - imgWidth * scale) / 2;
-    const minY = (PREVIEW_SIZE - imgHeight * scale) / 2;
-    const padding = 20;
-    imgX = Math.max(minX - padding, Math.min(maxX + padding, imgX));
-    imgY = Math.max(minY - padding, Math.min(maxY + padding, imgY));
+    // Center the image first (this is what we want by default)
+    const centerX = (PREVIEW_SIZE - imgWidth * scale) / 2;
+    const centerY = (PREVIEW_SIZE - imgHeight * scale) / 2;
+    
+    // Allow dragging but keep image mostly visible (small padding)
+    const maxOffsetX = Math.abs(centerX) + 30;
+    const maxOffsetY = Math.abs(centerY) + 30;
+    
+    imgX = Math.max(-maxOffsetX, Math.min(maxOffsetX, imgX));
+    imgY = Math.max(-maxOffsetY, Math.min(maxOffsetY, imgY));
   }
 
   if (zoom) {

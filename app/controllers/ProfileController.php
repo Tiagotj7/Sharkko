@@ -56,12 +56,20 @@ class ProfileController
                 $data['linkedin_url'] = trim($_POST['linkedin_url'] ?? '');
                 $data['website_url'] = trim($_POST['website_url'] ?? '');
 
-                // avatar
-                if (!empty($_FILES['avatar']['name'])) {
+                // avatar - if new file uploaded, update it
+                if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['size'] > 0) {
                     if ($user['avatar']) {
                         delete_image($user['avatar'], 'avatars');
                     }
-                    $data['avatar'] = upload_image($_FILES['avatar'], 'avatars');
+                    $uploadedFile = upload_image($_FILES['avatar'], 'avatars');
+                    if ($uploadedFile) {
+                        $data['avatar'] = $uploadedFile;
+                    } else {
+                        $errors[] = 'Erro ao fazer upload do avatar.';
+                    }
+                } else {
+                    // Keep the old avatar if no new file was uploaded
+                    $data['avatar'] = $user['avatar'];
                 }
 
                 if (empty($data['name'])) {
