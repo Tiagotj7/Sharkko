@@ -41,10 +41,25 @@
 
     <label>
       Avatar (opcional)
-      <input type="file" name="avatar" accept="image/*">
+      <input id="avatarInput" type="file" name="avatar" accept="image/*">
       <?php if (!empty($data['avatar'])): ?>
         <p>Avatar atual: <img src="uploads/avatars/<?= esc($data['avatar']) ?>" width="50" alt=""></p>
       <?php endif; ?>
+
+      <div id="avatarPreviewWrap" class="avatar-preview-wrap" style="display:none; margin-top:10px;">
+        <div class="avatar-preview" id="avatarPreview" style="width:200px;height:200px;overflow:hidden;border:1px solid #ccc;border-radius:50%;position:relative;background:#f6f6f6;">
+          <img id="avatarPreviewImg" src="" alt="Preview" style="position:absolute;top:0;left:0;transform-origin:top left;">
+        </div>
+        <div style="margin-top:8px;">
+          <label>Zoom <input id="avatarZoom" type="range" min="1" max="3" step="0.01" value="1"></label>
+        </div>
+        <p style="font-size:12px;color:#666;margin-top:6px;">Arraste a imagem para reposicionar. Use o zoom para ajustar o corte.</p>
+
+        <!-- Hidden inputs to send crop params to server if needed -->
+        <input type="hidden" name="avatar_crop_scale" id="avatarCropScale" value="1">
+        <input type="hidden" name="avatar_crop_x" id="avatarCropX" value="0">
+        <input type="hidden" name="avatar_crop_y" id="avatarCropY" value="0">
+      </div>
     </label>
 
     <label>
@@ -67,6 +82,8 @@
 </main>
 
 <?php include __DIR__ . '/../partials/footer.php'; ?>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/avatar-preview.js"></script>
 <script src="assets/js/theme-toggle.js"></script>
 </body>
 </html>
