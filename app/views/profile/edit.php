@@ -39,61 +39,49 @@
       <input type="text" name="location" value="<?= esc(old('location', $data['location'])) ?>">
     </label>
 
-    <div class="avatar-upload-section">
-      <label class="avatar-label">Foto de perfil</label>
-      
-      <div class="avatar-container">
-        <!-- Current avatar display -->
-        <?php if (!empty($data['avatar'])): ?>
-          <div class="avatar-current">
-            <img src="uploads/avatars/<?= esc($data['avatar']) ?>" alt="Avatar atual" class="avatar-current-img">
-            <div class="avatar-overlay">Alterar</div>
-          </div>
-        <?php else: ?>
-          <div class="avatar-placeholder-box">📷</div>
-        <?php endif; ?>
-
-        <!-- Hidden file input -->
-        <input type="file" id="avatarInput" name="avatar" accept="image/*" class="avatar-file-input">
-      </div>
+    <label>
+      Avatar (opcional)
+      <input id="avatarInput" type="file" name="avatar" accept="image/*">
+      <?php if (!empty($data['avatar'])): ?>
+        <p>Avatar atual: <img src="uploads/avatars/<?= esc($data['avatar']) ?>" width="80" alt="Avatar"></p>
+      <?php endif; ?>
 
       <!-- Preview and crop interface -->
-      <div id="avatarPreviewWrap" class="avatar-preview-wrap" style="display:none;">
-        <div class="avatar-preview-header">
-          <h3>Ajuste sua foto</h3>
-          <p class="avatar-preview-subtext">Arraste para reposicionar • Use o zoom para ajustar</p>
-        </div>
+      <div id="avatarPreviewWrap" style="display:none; margin-top:15px; padding:15px; background:#f5f5f5; border-radius:8px;">
+        <h4 style="margin-top:0;">Ajuste sua foto</h4>
+        <p style="font-size:0.9rem; color:#666; margin:5px 0 10px 0;">Arraste para reposicionar • Use o zoom para ajustar</p>
         
-        <div class="avatar-preview-container">
-          <div class="avatar-preview" id="avatarPreview">
-            <img id="avatarPreviewImg" src="" alt="Preview">
+        <div style="text-align:center; margin-bottom:15px;">
+          <div id="avatarPreview" style="width:200px; height:200px; margin:0 auto; border-radius:50%; overflow:hidden; background:#ddd; position:relative; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <img id="avatarPreviewImg" src="" alt="Preview" style="position:absolute; top:0; left:0;">
           </div>
         </div>
 
         <!-- Zoom control -->
-        <div class="zoom-control">
-          <span class="zoom-label">🔍</span>
-          <input id="avatarZoom" type="range" min="1" max="3" step="0.1" value="1" class="zoom-slider">
-          <span class="zoom-value" id="zoomValue">100%</span>
+        <div style="margin-bottom:15px;">
+          <label style="display:flex; align-items:center; gap:10px;">
+            <span>🔍 Zoom:</span>
+            <input id="avatarZoom" type="range" min="1" max="3" step="0.1" value="1" style="flex:1;">
+            <span id="zoomValue" style="min-width:50px; font-weight:bold; color:#2563eb;">100%</span>
+          </label>
         </div>
 
         <!-- Validation message -->
-        <div id="avatarValidationMsg" class="avatar-validation-msg" style="display:none;"></div>
+        <div id="avatarValidationMsg" style="display:none; padding:10px; margin-bottom:15px; border-radius:4px; font-size:0.9rem;"></div>
 
         <!-- Hidden inputs -->
         <input type="hidden" name="avatar_crop_scale" id="avatarCropScale" value="1">
         <input type="hidden" name="avatar_crop_x" id="avatarCropX" value="0">
         <input type="hidden" name="avatar_crop_y" id="avatarCropY" value="0">
 
-        <div class="avatar-preview-actions">
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
           <button type="button" id="avatarCancelBtn" class="btn-secondary">Cancelar</button>
           <button type="button" id="avatarConfirmBtn" class="btn-primary">Confirmar</button>
         </div>
-      </div>
 
-      <!-- Info text -->
-      <p class="avatar-info">JPG, PNG ou GIF • Mín. 400x400px • Máx. 5MB</p>
-    </div>
+        <p style="font-size:0.85rem; color:#999; margin-top:10px; margin-bottom:0;">JPG, PNG ou GIF • Mín. 400x400px • Máx. 5MB</p>
+      </div>
+    </label>
 
     <label>
       GitHub URL
