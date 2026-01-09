@@ -39,28 +39,61 @@
       <input type="text" name="location" value="<?= esc(old('location', $data['location'])) ?>">
     </label>
 
-    <label>
-      Avatar (opcional)
-      <input id="avatarInput" type="file" name="avatar" accept="image/*">
-      <?php if (!empty($data['avatar'])): ?>
-        <p>Avatar atual: <img src="uploads/avatars/<?= esc($data['avatar']) ?>" width="50" alt=""></p>
-      <?php endif; ?>
+    <div class="avatar-upload-section">
+      <label class="avatar-label">Foto de perfil</label>
+      
+      <div class="avatar-container">
+        <!-- Current avatar display -->
+        <?php if (!empty($data['avatar'])): ?>
+          <div class="avatar-current">
+            <img src="uploads/avatars/<?= esc($data['avatar']) ?>" alt="Avatar atual" class="avatar-current-img">
+            <div class="avatar-overlay">Alterar</div>
+          </div>
+        <?php else: ?>
+          <div class="avatar-placeholder-box">📷</div>
+        <?php endif; ?>
 
-      <div id="avatarPreviewWrap" class="avatar-preview-wrap" style="display:none; margin-top:10px;">
-        <div class="avatar-preview" id="avatarPreview" style="width:200px;height:200px;overflow:hidden;border:1px solid #ccc;border-radius:50%;position:relative;background:#f6f6f6;">
-          <img id="avatarPreviewImg" src="" alt="Preview" style="position:absolute;top:0;left:0;transform-origin:top left;">
-        </div>
-        <div style="margin-top:8px;">
-          <label>Zoom <input id="avatarZoom" type="range" min="1" max="3" step="0.1" value="1" style="width:100%;"></label>
-        </div>
-        <p style="font-size:12px;color:#666;margin-top:6px;">Arraste a imagem para reposicionar. Use o zoom para ajustar o corte.</p>
+        <!-- Hidden file input -->
+        <input type="file" id="avatarInput" name="avatar" accept="image/*" class="avatar-file-input">
+      </div>
 
-        <!-- Hidden inputs to send crop params to server if needed -->
+      <!-- Preview and crop interface -->
+      <div id="avatarPreviewWrap" class="avatar-preview-wrap" style="display:none;">
+        <div class="avatar-preview-header">
+          <h3>Ajuste sua foto</h3>
+          <p class="avatar-preview-subtext">Arraste para reposicionar • Use o zoom para ajustar</p>
+        </div>
+        
+        <div class="avatar-preview-container">
+          <div class="avatar-preview" id="avatarPreview">
+            <img id="avatarPreviewImg" src="" alt="Preview">
+          </div>
+        </div>
+
+        <!-- Zoom control -->
+        <div class="zoom-control">
+          <span class="zoom-label">🔍</span>
+          <input id="avatarZoom" type="range" min="1" max="3" step="0.1" value="1" class="zoom-slider">
+          <span class="zoom-value" id="zoomValue">100%</span>
+        </div>
+
+        <!-- Validation message -->
+        <div id="avatarValidationMsg" class="avatar-validation-msg" style="display:none;"></div>
+
+        <!-- Hidden inputs -->
         <input type="hidden" name="avatar_crop_scale" id="avatarCropScale" value="1">
         <input type="hidden" name="avatar_crop_x" id="avatarCropX" value="0">
         <input type="hidden" name="avatar_crop_y" id="avatarCropY" value="0">
+
+        <div class="avatar-preview-actions">
+          <button type="button" id="avatarCancelBtn" class="btn-secondary">Cancelar</button>
+          <button type="button" id="avatarConfirmBtn" class="btn-primary">Confirmar</button>
+        </div>
       </div>
-    </label>
+
+      <!-- Info text -->
+      <p class="avatar-info">JPG, PNG ou GIF • Mín. 400x400px • Máx. 5MB</p>
+    </div>
 
     <label>
       GitHub URL
